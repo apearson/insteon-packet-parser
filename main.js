@@ -1,169 +1,53 @@
 //Switch to errors only
 'use strict';
 
+// const BasePacket = require('./BasePacket.js');
+const Packets = require('./Packets');
+const PacketTypes = require('./PacketTypes.js');
+const Parsers = require('./Parsers.js');
+
 const IPP = {
   currentlyReading: false,
-  packetIndex: 1,
-  packet: {
-    type: null,
-    from: [],
-    to: [],
-    flag: null,
-    cmd1: null,
-    cmd2: null,
-    extendedData: []
-  },
+  packetIndex: 1,                                                               //Setting this to 1 to follow the interface documentation
+  packet: {},
   emitter: null,
 
-  parser: (emitter, buffer)=>{
-    //Registering emitter
-    IPP.emitter = emitter;
-
-    //console.log(buffer);
-
-    //Splitting buffer into bytes and parsing each
-    for(let i = 0; i < buffer.length; i++){
-      IPP.parseIncomingByte(buffer.readUInt8(i));
+  parser: (emitter, buffer)=>{                                                  //Register emitter and split buffer into bytes for parsing
+    IPP.emitter = emitter;                                                        //Registering emitter
+    for(let i = 0; i < buffer.length; i++){                                       //Splitting buffer into bytes
+      IPP.parseIncomingByte(buffer.readUInt8(i));                                   //Parsing each byte
     }
   },
-  parseIncomingByte: (byte)=>{
-    //Starting to read buffer
-    if(!IPP.currentlyReading && byte == 0x02){
-      //Starting read
-      IPP.currentlyReading = true;
-
-      //Moving to next index
-      IPP.packetIndex++;
+  parseIncomingByte: (byte)=>{                                                  //Parse incoming bytes
+    if(!IPP.currentlyReading && byte === 0x02){                                    //Packet Start Byte
+      IPP.currentlyReading = true;                                                  //Changing to reading state
+      IPP.packet = {};                                                              //Clearing packet for next packet
+      IPP.packetIndex = 2;                                                          //Move to correct byte index
     }
-    else if(IPP.packetIndex === 2){
-      IPP.parsePacketType(byte);
+    else if(IPP.packetIndex === 2){                                               //Packet Type Byte
+      IPP.parsePacketType(byte);                                                    //Parse Packet Type
+      IPP.buildPacket(byte);                                                        //Build Packet based on type
+      IPP.packetIndex++;                                                            //Move to next byte index
     }
-    else if(IPP.packet.type == 'command'){
-      IPP.parseStandardCommand(byte);
-    }
-    else if(IPP.packet.type == 'extended'){
-      IPP.parseExtendedMessage(byte);
-    }
-    else if(IPP.packet.type == 'standard'){
-      IPP.parseStandardMessage(byte);
+    else{
+      Parsers[IPP.packet.commandNumber](byte, IPP.packetIndex, IPP.packet, IPP.completePacket); //Parse packet data based on packet type
+      IPP.packetIndex++;                                                            //Move to next byte index
     }
   },
 
-  parsePacketType: (byte)=>{
-    switch(byte){
-      case 0x50:
-        IPP.packet.type = 'standard';
-        break;
-      case 0x51:
-        IPP.packet.type = 'extended';
-        break;
-      case 0x62:
-        IPP.packet.type = 'command';
-    }
-
-    IPP.packetIndex++;
+  parsePacketType: (byte)=>{                                                    //Parse packet type byte
+    IPP.packet.commandNumber = byte;                                              //Record byte
+    IPP.packet.type = PacketTypes[byte];                                          //Looking up byte meaning in dictionary
   },
-
-  /* Commands */
-  parseStandardCommand: (byte)=>{
-    if(IPP.packetIndex > 2 && IPP.packetIndex < 6){ //To
-      IPP.packet.to.push(byte);
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex === 6){
-      IPP.packet.flag = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 7){ //Cmd1
-      IPP.packet.cmd1 = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 8){ //Cmd2
-      IPP.packet.cmd2 = byte;
-      IPP.packetIndex++;
-
-      //Complete Packet
-      IPP.completePacket();
-    }
+  buildPacket: (type)=>{
+    IPP.packet = Object.assign(IPP.packet, Packets[type]);
   },
-  parseExtendedCommand: (byte)=>{
-  },
+  completePacket: ()=>{                                                         //Close packet and send event to listeners
+    IPP.emitter.emit('packet', IPP.packet);                                       //Send parsed packet to listeners
 
-  /* Messages */
-  parseStandardMessage: (byte)=>{
-    if(IPP.packetIndex > 2 && IPP.packetIndex < 6){ //From
-      IPP.packet.from.push(byte);
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex > 5 && IPP.packetIndex < 9){ //To
-      IPP.packet.to.push(byte);
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 9){ //Flag
-      IPP.packet.flag = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 10){ //Cmd1
-      IPP.packet.cmd1 = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 11){  //Cmd2
-      IPP.packet.cmd2 = byte;
-      IPP.packetIndex++;
-
-      //Packet Complete
-      IPP.completePacket();
-    }
-  },
-  parseExtendedMessage: (byte)=>{
-    if(IPP.packetIndex > 2 && IPP.packetIndex < 6){ //From
-      IPP.packet.from.push(byte);
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex > 5 && IPP.packetIndex < 9){ //To
-      IPP.packet.to.push(byte);
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 9){ //Flag
-      IPP.packet.flag = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 10){ //Cmd1
-      IPP.packet.cmd1 = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex == 11){ //Cmd2
-      IPP.packet.cmd2 = byte;
-      IPP.packetIndex++;
-    }
-    else if(IPP.packetIndex > 11 && IPP.packetIndex < 25){ //Extended Data
-      IPP.packet.extendedData.push(byte);
-      IPP.packetIndex++;
-
-      //Complete Packet
-      if(packetIndex == 24){
-        IPP.completePacket();
-      }
-    }
-  },
-
-  /* Packet Complete */
-  completePacket: ()=>{
-    //Send parsed packet
-    IPP.emitter.emit('packet', IPP.packet);
-
-    //Clearing packet data
-    IPP.currentlyReading = false;
-    IPP.packetIndex = 1;
-    IPP.packet = {
-      type: null,
-      from: [],
-      to: [],
-      flag: null,
-      cmd1: null,
-      cmd2: null,
-      extendedData: []
-    };
+    IPP.currentlyReading = false;                                                 //Resetting reading state
+    IPP.packet = {};                                                              //Resetting packet data
+    IPP.packetIndex = 0;                                                          //Resetting read index
   }
 }
 
