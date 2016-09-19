@@ -6,8 +6,8 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.packetLength = 12;
-    self.index = 3;
+    self.packetLength = 11;
+    self.index = 2;
     self.completed = false;
 
     /* Packet Data */
@@ -20,6 +20,8 @@ module.exports = {
     self.ack = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if (self.index > 2 && self.index <= 5) {
         self.from.push(byte);
       } else if (self.index >= 6 && self.index <= 8) {
@@ -34,7 +36,6 @@ module.exports = {
         self.ack = byte;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -60,7 +61,7 @@ module.exports = {
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
     self.packetLength = 25;
-    self.index = 3;
+    self.index = 2;
     self.completed = false;
 
     /* Packet Data */
@@ -73,6 +74,8 @@ module.exports = {
     self.extendedData = [];
 
     self.parse = function(byte){
+      self.index++;
+
       if (index > 2 && self.index < 6) { //From
         self.from.push(byte);
       } else if (self.index > 5 && self.index < 9) { //To
@@ -87,7 +90,6 @@ module.exports = {
         self.extendedData.push(byte);
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -114,7 +116,7 @@ module.exports = {
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
     self.packetLength = 4;
-    self.index = 3;
+    self.index = 2;
     self.completed = false;
 
     /* Packet Data */
@@ -123,6 +125,8 @@ module.exports = {
     self.X10Flag = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.rawX10 = byte;
       }
@@ -130,7 +134,6 @@ module.exports = {
         self.x10Flag = byte;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -153,7 +156,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 10;
     self.completed = false;
 
@@ -167,6 +170,8 @@ module.exports = {
     self.firmware = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.linkCode = byte;
       }
@@ -186,7 +191,6 @@ module.exports = {
         self.firmware = byte;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -221,6 +225,8 @@ module.exports = {
     self.event = null;
 
     self.parse = function(byte){
+      self.index++;
+
       packet.event = byte;
 
       self.complete();
@@ -270,7 +276,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 7;
     self.completed = false;
 
@@ -280,6 +286,8 @@ module.exports = {
     self.device = [];
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 4){
         self.allLinkGroup = byte;
       }
@@ -287,7 +295,6 @@ module.exports = {
         self.device.push(byte);
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -310,7 +317,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 10;
     self.completed = false;
 
@@ -322,6 +329,8 @@ module.exports = {
     self.linkData = [];
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.allLinkRecordFlags = byte;
       }
@@ -335,7 +344,6 @@ module.exports = {
         self.linkData.push(byte);
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -359,7 +367,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -368,6 +376,8 @@ module.exports = {
     self.status = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.status = true;
       }
@@ -375,7 +385,6 @@ module.exports = {
         self.status = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -396,7 +405,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 9;
     self.completed = false;
 
@@ -409,6 +418,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index >= 3 && self.index <= 5){
         self.ID.push(byte);
       }
@@ -430,7 +441,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -455,7 +465,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 6;
     self.completed = false;
 
@@ -467,6 +477,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.allLinkGroup = byte;
       }
@@ -485,7 +497,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -509,7 +520,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 23;
     self.completed = false;
 
@@ -522,6 +533,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if (self.index >= 3 && self.index <= 5) { //To
         self.to.push(byte);
       } else if (self.index === 6) {
@@ -538,7 +551,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -563,7 +575,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 5;
     self.completed = false;
 
@@ -574,6 +586,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.rawX10 = byte;
       }
@@ -589,7 +603,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -612,7 +625,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 5;
     self.completed = false;
 
@@ -623,6 +636,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.linkCode = byte;
       }
@@ -638,7 +653,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -662,7 +676,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -671,6 +685,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -678,7 +694,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -699,7 +714,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 6;
     self.completed = false;
 
@@ -711,6 +726,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.devcat = byte;
       }
@@ -729,7 +746,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -753,7 +769,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -762,6 +778,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -769,7 +787,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -790,7 +807,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 4;
     self.completed = false;
 
@@ -800,6 +817,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.cmd2 = byte;
       }
@@ -812,7 +831,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -834,7 +852,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -843,6 +861,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -850,7 +870,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -871,7 +890,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -880,6 +899,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -887,7 +908,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -908,7 +928,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 4;
     self.completed = false;
 
@@ -918,6 +938,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.imConfigurationFlags = byte;
       }
@@ -930,7 +952,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -952,7 +973,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -961,6 +982,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -968,7 +991,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -989,7 +1011,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -998,6 +1020,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -1005,7 +1029,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1026,7 +1049,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -1035,6 +1058,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(byte === 0x06){
         self.success = true;
       }
@@ -1042,7 +1067,6 @@ module.exports = {
         self.success = false;
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1064,7 +1088,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 12;
     self.completed = false;
 
@@ -1078,6 +1102,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.controlCode = byte;
       }
@@ -1102,7 +1128,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1128,7 +1153,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 4;
     self.completed = false;
 
@@ -1138,6 +1163,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.cmd2 = byte;
       }
@@ -1150,7 +1177,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1172,7 +1198,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 5;
     self.completed = false;
 
@@ -1183,6 +1209,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.cmd1 = byte;
       }
@@ -1198,7 +1226,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1221,7 +1248,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 3;
     self.completed = false;
 
@@ -1232,6 +1259,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.cmd1 = byte;
       }
@@ -1247,7 +1276,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 
@@ -1270,7 +1298,7 @@ module.exports = {
 
     self.emitter = emitter;
     self.bytesNeeded = function(){return self.packetLength - self.index};
-    self.index = 3;
+    self.index = 2;
     self.packetLength = 6;
     self.completed = false;
 
@@ -1280,6 +1308,8 @@ module.exports = {
     self.success = null;
 
     self.parse = function(byte){
+      self.index++;
+
       if(self.index === 3){
         self.imConfigurationFlags = byte;
       }
@@ -1292,7 +1322,6 @@ module.exports = {
         }
       }
 
-      self.index++;
       if(self.bytesNeeded() === 0){ self.complete(); }
     };
 

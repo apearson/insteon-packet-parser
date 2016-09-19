@@ -9,7 +9,6 @@ let packet = {completed: true}; //Template Packet
 
 const IPP = {
   parser: (emitter, buffer)=>{                                                  //Register emitter and split buffer into bytes for parsing
-    console.log(buffer);
     IPP.emitter = emitter;                                                        //Registering emitter
     for(let i = 0; i < buffer.length; i++){                                       //Splitting buffer into bytes
       IPP.parseIncomingByte(buffer.readUInt8(i), emitter);                          //Parsing each byte
