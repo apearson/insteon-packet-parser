@@ -22,12 +22,29 @@ module.exports = {
     self.parse = function(byte){
       self.index++;
 
-      if (self.index > 2 && self.index <= 5) {
+      if (self.index >= 3 && self.index <= 5) {
         self.from.push(byte);
       } else if (self.index >= 6 && self.index <= 8) {
         self.to.push(byte);
       } else if (self.index == 9) {
         self.flags = byte;
+
+        /* Reading Flags */
+        self.maxHops = (byte & 3);
+        self.hopsLeft = ((byte & 12) >> 2);
+        self.extended = !!(byte & 16);
+        self.meaning = ((byte & 224) >> 5);
+
+        /* Intrupting Meaning Flag */
+        if(self.meaning === 0){ self.meaning = 'Direct Message'; }
+        else if(self.meaning === 1){ self.meaning = 'ACK of Direct Message'; }
+        else if(self.meaning === 2){ self.meaning = 'Group Cleanup Direct Message'; }
+        else if(self.meaning === 3){ self.meaning = 'ACK of Group Cleanup Direct Message'; }
+        else if(self.meaning === 4){ self.meaning = 'Broadcast Message'; }
+        else if(self.meaning === 5){ self.meaning = 'NAK of Direct Message'; }
+        else if(self.meaning === 6){ self.meaning = 'Group Broadcast Message'; }
+        else if(self.meaning === 7){ self.meaning = 'NAK of Group Cleanup Direct Message'; }
+
       } else if (self.index == 10) {
         self.cmd1 = byte;
       } else if (self.index == 11) {
@@ -47,6 +64,10 @@ module.exports = {
         from:  self.from,
         to:    self.to,
         flags: self.flags,
+        maxHops: self.maxHops,
+        hopsLeft: self.hopsLeft,
+        extended: self.extended,
+        meaning: self.meaning,
         cmd1:  self.cmd1,
         cmd2:  self.cmd2,
       };
@@ -323,7 +344,7 @@ module.exports = {
 
     /* Packet Data */
     self.type = 'ALL-Link Record Response';
-    self.allLinkRecordFlags = null;
+    self.recordType = null;
     self.allLinkGroup = null;
     self.from = [];
     self.linkData = [];
@@ -332,7 +353,8 @@ module.exports = {
       self.index++;
 
       if(self.index === 3){
-        self.allLinkRecordFlags = byte;
+        if(!!(byte & 64)){ self.recordType = 'Controller'; }
+        else { self.recordType = 'Responder'; }
       }
       else if(self.index === 4){
         self.allLinkGroup = byte;
@@ -352,7 +374,7 @@ module.exports = {
 
       let packet = {
         type: self.type,
-        allLinkRecordFlags:  self.allLinkGroup,
+        recordType:  self.recordType,
         allLinkGroup:  self.allLinkGroup,
         from:  self.from,
         linkData:  self.linkData,
@@ -934,14 +956,21 @@ module.exports = {
 
     /* Packet Data */
     self.type = 'Set IM Configuration';
-    self.imConfigurationFlags = null;
+    self.autoLinking = null;
+    self.monitorMode = null;
+    self.autoLED = null;
+    self.deadman = null;
     self.success = null;
 
     self.parse = function(byte){
       self.index++;
 
       if(self.index === 3){
-        self.imConfigurationFlags = byte;
+        /* Reading Flags */
+        self.autoLinking = !(byte & 128);
+        self.monitorMode = !!(byte & 64);
+        self.autoLED = !(byte & 32);
+        self.deadman = !(byte & 16);
       }
       else{
         if(byte === 0x06){
@@ -960,7 +989,10 @@ module.exports = {
 
       let packet = {
         type: self.type,
-        imConfigurationFlags:  self.imConfigurationFlags,
+        autoLinking: self.autoLinking,
+        monitorMode: self.monitorMode,
+        autoLED: self.autoLED,
+        deadman: self.deadman,
         success:  self.success,
       };
 
@@ -1095,7 +1127,7 @@ module.exports = {
     /* Packet Data */
     self.type = 'Manage ALL-Link Record';
     self.controlCode = null;
-    self.allLinkRecordFlags = null;
+    self.recordType = null;
     self.allLinkGroup = null;
     self.device = [];
     self.linkData = [];
@@ -1108,7 +1140,8 @@ module.exports = {
         self.controlCode = byte;
       }
       else if(self.index === 4){
-        self.allLinkRecordFlags = byte;
+        if(!!(byte & 64)){ self.recordType = 'Controller'; }
+        else { self.recordType = 'Responder'; }
       }
       else if(self.index === 5){
         self.allLinkGroup = byte;
@@ -1137,7 +1170,7 @@ module.exports = {
       let packet = {
         type: self.type,
         controlCode:  self.controlCode,
-        allLinkRecordFlags:  self.allLinkRecordFlags,
+        recordType:  self.recordType,
         allLinkGroup:  self.allLinkGroup,
         device:  self.device,
         linkData:  self.linkData,
@@ -1304,14 +1337,21 @@ module.exports = {
 
     /* Packet Data */
     self.type = 'Get IM Configuration';
-    self.imConfigurationFlags = null;
+    self.autoLinking = null;
+    self.monitorMode = null;
+    self.autoLED = null;
+    self.deadman = null;
     self.success = null;
 
     self.parse = function(byte){
       self.index++;
 
       if(self.index === 3){
-        self.imConfigurationFlags = byte;
+        /* Reading Flags */
+        self.autoLinking = !(byte & 128);
+        self.monitorMode = !!(byte & 64);
+        self.autoLED = !(byte & 32);
+        self.deadman = !(byte & 16);
       }
       else{
         if(byte === 0x06){
@@ -1330,7 +1370,10 @@ module.exports = {
 
       let packet = {
         type: self.type,
-        imConfigurationFlags:  self.imConfigurationFlags,
+        autoLinking: self.autoLinking,
+        monitorMode: self.monitorMode,
+        autoLED: self.autoLED,
+        deadman: self.deadman,
         success:  self.success,
       };
 
