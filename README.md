@@ -18,6 +18,17 @@ const port = new SerialPort('/dev/tty.usbserial-A60336ZZ', {
 /* On data packet */
 port.on('packet', (packet) => {
   console.log(packet);
+  
+  /* Result
+    { 
+      type: 'Get IM Configuration',
+      autoLinking: true,
+      monitorMode: true,
+      autoLED: true,
+      deadman: true,
+      success: true 
+    } 
+  /*
 });
 
 /* On serial port opened send command */
