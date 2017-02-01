@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrewpe/InsteonPacketParser.git"
+    "url": "git+https://github.com/apearson/InsteonPacketParser.git"
   },
   "keywords": [
     "insteon",
@@ -19,7 +19,7 @@
   "author": "Andrew Pearson",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/andrewpe/InsteonPacketParser/issues"
+    "url": "https://github.com/apearson/InsteonPacketParser/issues"
   },
-  "homepage": "https://github.com/andrewpe/InsteonPacketParser#readme"
+  "homepage": "https://github.com/apearson/InsteonPacketParser#readme"
 }
