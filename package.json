@@ -1,6 +1,6 @@
 {
   "name": "insteon-packet-parser",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "This is a serialport parser for parsing Insteon PLM data. ",
   "main": "main.js",
   "scripts": {
@@ -16,8 +16,8 @@
     "serialport",
     "PLM"
   ],
-  "author": "Andrew Pearson",
-  "license": "ISC",
+  "author": "John Andrew Tyler Pearson",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/apearson/InsteonPacketParser/issues"
   },
