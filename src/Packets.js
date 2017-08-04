@@ -1,4 +1,4 @@
-'use strict;'                                                                   //Switch to errors only
+'use strict;'
 
 module.exports = {
   0x50: function packet(emitter){

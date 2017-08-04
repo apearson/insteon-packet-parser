@@ -3,9 +3,9 @@ A simple Insteon packet parser to be used by [Node Serialport](https://github.co
 
 If you see any problems, have any advice, or want to help out please open an issue. 
 
-##Examples
+## Examples
 
-####Send Command and read replies
+## Send Command and read replies
 ```js
 const InsteonPacketParser = require('insteon-packet-parser');
 

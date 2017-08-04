@@ -1,8 +1,7 @@
 //Switch to errors only
 'use strict';
 
-// const BasePacket = require('./BasePacket.js');
-const Packets = require('./Packets');
+const Packets = require('./Packets.js');
 
 let packetTypeNeeded = true;    //Packet Type undefined?
 let packet = {completed: true}; //Template Packet
