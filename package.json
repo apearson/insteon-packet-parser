@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/apearson/InsteonPacketParser.git"
+    "url": "git+https://github.com/apearson/insteon-packet-parser.git"
   },
   "keywords": [
     "insteon",
@@ -19,7 +19,7 @@
   "author": "John Andrew Tyler Pearson",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/apearson/InsteonPacketParser/issues"
+    "url": "https://github.com/apearson/insteon-packet-parser/issues"
   },
-  "homepage": "https://github.com/apearson/InsteonPacketParser#readme"
+  "homepage": "https://github.com/apearson/insteon-packet-parser#readme"
 }
