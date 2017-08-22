@@ -1,14 +1,5 @@
-# InsteonPacketParser
-A simple Insteon packet parser to be used by [Node Serialport](https://github.com/EmergingTechnologyAdvisors/node-serialport) and a PowerLinc Modem (PLM) library or program. This library and it's API are still in beta and should not be trusted not to change until v1.
-
-If you see any problems, have any advice, or want to help out please open an issue. 
-
-## Examples
-
-## Send Command and read replies
-```js
 const SerialPort = require('serialport');
-const IPP = require('insteon-packet-parser');
+const IPP = require('../lib/insteon-packet-parser');
 
 /* Open serial port */
 const port = new SerialPort('/dev/tty.usbserial-A60336ZZ', {
@@ -51,4 +42,3 @@ port.on('open', () => {
     }
   });
 });
-```
