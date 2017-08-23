@@ -514,7 +514,7 @@ module.exports = {
         this.packet.to.push(byte);
       }
       else if(this.index === 6){
-        this.packet.flag = byte;
+        this.packet.flags = byte;
       }
       else if(this.index === 7){
         this.packet.cmd1 = byte;
