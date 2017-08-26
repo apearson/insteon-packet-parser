@@ -24,6 +24,21 @@ class Packet{
 
 /* Packet Parsing Classes */
 module.exports = {
+  0x15: class extends Packet{
+    constructor(){
+      /* Constructing super class */
+      super(2, 2, true);
+
+      /* Packet Data */
+      this.packet = {
+        id: 0x15,
+        type: 'Modem Not Ready'
+      };
+    }
+    parse(byte){
+      return byte;
+    }
+  },
   0x50: class extends Packet{
     constructor(){
       /* Constructing super class */
@@ -261,7 +276,8 @@ module.exports = {
       this.packet = {
         id: 0x54,
         type: 'Button Event Report',
-        event: null
+        event: null,
+        meaning: null
       };
     }
     parse(byte){
@@ -270,6 +286,28 @@ module.exports = {
 
       /* Determining where to place byte */
       this.packet.event = byte;
+
+      /* Determining meaning of event byte */
+      switch(byte){
+        case 0x02:
+          this.packet.meaning = 'IM SET Button tapped'; break;
+        case 0x03:
+          this.packet.meaning = 'IM SET Button held'; break;
+        case 0x04:
+          this.packet.meaning = 'IM SET Button released after hold'; break;
+        case 0x12:
+          this.packet.meaning = 'IM Button 2 tapped'; break;
+        case 0x13:
+          this.packet.meaning = 'IM Button 2 held'; break;
+        case 0x14:
+          this.packet.meaning = 'IM Button 2 released after hold'; break;
+        case 0x22:
+          this.packet.meaning = 'IM Button 3 tapped'; break;
+        case 0x23:
+          this.packet.meaning = 'IM Button 3 held'; break;
+        case 0x24:
+          this.packet.meaning = 'IM Button 3 released after hold'; break;
+      }
 
       /* Check no more data is need, call completed */
       if(this.bytesNeeded() === 0){
