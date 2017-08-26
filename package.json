@@ -1,6 +1,6 @@
 {
   "name": "insteon-packet-parser",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "This is a serialport parser for parsing Insteon PLM data. ",
   "main": "./src/main.js",
   "scripts": {
