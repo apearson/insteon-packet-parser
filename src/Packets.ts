@@ -1,11 +1,24 @@
-/* Packet abstract base class */
-class Packet{
-  constructor(length, index, completed){
-    /* Abstract class check */
-    if(new.target === Packet){
-      throw new TypeError('Cannot construct Packet instances directly');
-    }
+/* Interfaces */
+export type PacketID = 
+  0x15 | 
+  0x50 | 0x51 | 0x52 | 0x53 | 0x54 | 0x55 | 0x56 | 0x57 | 0x58 |
+  0x60 | 0x61 | 0x62 | 0x63 | 0x64 | 0x65 | 0x66 | 0x67 | 0x68 | 0x69 |
+  0x6A | 0x6B | 0x6C | 0x6D | 0x6E | 0x6F |
+  0x70 | 0x71 | 0x72 | 0x73;
 
+/* Packet abstract base class */
+export abstract class Packet{
+  /* Internal Variables */
+  public packetLength: number;
+  public index: number;
+  public completed: boolean;
+  public packet: {
+    id: number,
+    type: string,
+    [key: string]: any
+  };
+
+  constructor(length: number, index: number, completed:boolean){
     /* Packet metadata */
     this.packetLength = length;
     this.index = index;
@@ -20,10 +33,11 @@ class Packet{
   bytesNeeded(){
     return this.packetLength - this.index;
   }
+  parse(byte: number): void {}
 }
 
 /* Packet Parsing Classes */
-module.exports = {
+export const Packets: {[key: number]: any} = {
   0x15: class extends Packet{
     constructor(){
       /* Constructing super class */
@@ -35,7 +49,7 @@ module.exports = {
         type: 'Modem Not Ready'
       };
     }
-    parse(byte){
+    parse(byte: number){
       return byte;
     }
   },
@@ -59,7 +73,7 @@ module.exports = {
         cmd2: null,
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -133,7 +147,7 @@ module.exports = {
         extendedData: [],
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -202,7 +216,7 @@ module.exports = {
         X10Flag: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -237,7 +251,7 @@ module.exports = {
         firmware: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -280,7 +294,7 @@ module.exports = {
         meaning: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -326,7 +340,7 @@ module.exports = {
         type: 'User Reset Detected',
       };
     }
-    parse(byte){
+    parse(byte: number){
       return byte;
     }
   },
@@ -343,7 +357,7 @@ module.exports = {
         device: []
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -376,7 +390,7 @@ module.exports = {
         linkData:  []
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -417,7 +431,7 @@ module.exports = {
         status: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -451,7 +465,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -498,7 +512,7 @@ module.exports = {
         success: null,
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -543,7 +557,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -589,7 +603,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -629,7 +643,7 @@ module.exports = {
         success:  null,
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -667,7 +681,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -700,7 +714,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -741,7 +755,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -772,7 +786,7 @@ module.exports = {
         success:  null,
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -806,7 +820,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -836,7 +850,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -870,7 +884,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -909,7 +923,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -939,7 +953,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -969,7 +983,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -1004,7 +1018,7 @@ module.exports = {
         success: null,
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
 
@@ -1057,7 +1071,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -1093,7 +1107,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -1132,7 +1146,7 @@ module.exports = {
         success: null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       
@@ -1174,7 +1188,7 @@ module.exports = {
         success:  null
       };
     }
-    parse(byte){
+    parse(byte: number){
       /* Moving to next index */
       this.index++;
       

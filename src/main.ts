@@ -1,20 +1,26 @@
 /* Libraries */
-const { Transform } = require('stream');
-const Packet = require('./Packets.js');
+import {Transform} from 'stream';
+import {Packets, Packet} from './Packets';
 
-module.exports = class InsteonParser extends Transform{
+export class InsteonParser extends Transform{
+  /* Internal Variables */
+  private debug: boolean;
+  private started: boolean;
+  private type: number | undefined;
+  private packet: Packet;
+
   constructor(options = {debug: false, objectMode: true}){
     super(options);
 
     /* Parser internal variables */
-    this._debug = options.debug;
-    this._started = false;
-    this._type = null;
-    this._packet = null;
+    this.debug = options.debug;
+    this.started = false;
+    this.type = null;
+    this.packet = null;
   }
   
-  _transform(chunk, encoding, completed){
-    if(this._debug){
+  _transform(chunk: Buffer, encoding: string, completed: ()=> void){
+    if(this.debug){
       console.info(`Got chunk: ${chunk}`);
     }
 
@@ -26,45 +32,45 @@ module.exports = class InsteonParser extends Transform{
     /* Telling stream provider we have consumed the provided bytes with no errors*/
     completed();
     
-    if(this._debug){
+    if(this.debug){
       console.info('\n');
     }
   }
-  _parseByte(byte, completed){
+  _parseByte(byte: number){
     let command;
 
     /* Determing what needs to happen in packet */
-    if(!this._started && byte === 0x02){
+    if(!this.started && byte === 0x02){
       command = 'Starting Packet';
-      this._started = true;
+      this.started = true;
     }
-    else if(this._started && this._type == null){
+    else if(this.started && this.type == null){
       command = 'Grabbing packet type';
-      this._type = byte;
-      this._packet = new Packet[byte]();
+      this.type = byte;
+      this.packet = new Packets[byte]();
     }
-    else if(this._started && this._packet != null && !this._packet.completed){
+    else if(this.started && this.packet != null && !this.packet.completed){
       command = 'Grabbing packet info';
-      this._packet.parse(byte);
+      this.packet.parse(byte);
     }
     else{
       command = 'Unknown Data';
     }
     
     /* Debug Print out */
-    if(this._debug){
+    if(this.debug){
       console.info(`Processing: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}`);
     }
 
     /* Checking for packet completed */
-    if(this._packet != null && this._packet.completed){
+    if(this.packet != null && this.packet.completed){
       /* Sending completed packet upstream */
-      this.push(this._packet.packet);
+      this.push(this.packet.packet);
 
       /* Reseting environment for next packet */
-      this._started = false;
-      this._type = null;
-      this._packet = null;
+      this.started = false;
+      this.type = null;
+      this.packet = null;
     }
   }
 };

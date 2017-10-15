@@ -2,8 +2,11 @@
   "name": "insteon-packet-parser",
   "version": "2.1.0",
   "description": "This is a serialport parser for parsing Insteon PLM data. ",
-  "main": "./src/main.js",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -21,5 +24,9 @@
   "bugs": {
     "url": "https://github.com/apearson/insteon-packet-parser/issues"
   },
-  "homepage": "https://github.com/apearson/insteon-packet-parser#readme"
+  "homepage": "https://github.com/apearson/insteon-packet-parser#readme",
+  "devDependencies": {
+    "@types/node": "^8.0.34",
+    "typescript": "^2.5.3"
+  }
 }
