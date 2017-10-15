@@ -8,7 +8,7 @@ If you see any problems, have any advice, or want to help out please open an iss
 ## Send Command and read replies
 ```js
 const SerialPort = require('serialport');
-const IPP = require('insteon-packet-parser');
+const {InsteonParser} = require('../dist/main');
 
 /* Open serial port */
 const port = new SerialPort('/dev/tty.usbserial-A60336ZZ', {
@@ -19,7 +19,7 @@ const port = new SerialPort('/dev/tty.usbserial-A60336ZZ', {
 });
 
 /* Creating new parser */
-const parser = new IPP();
+const parser = new InsteonParser();
 
 /* Porting serial port to parser */
 port.pipe(parser);
