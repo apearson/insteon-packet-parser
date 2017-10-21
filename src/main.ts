@@ -1,8 +1,11 @@
 /* Libraries */
 import {Transform} from 'stream';
-import {Packets, Packet} from './Packets';
+import {Packets, Packet, PacketID} from './Packets';
 
-export class InsteonParser extends Transform{
+/* Exports */
+export {InsteonParser, Packets, Packet, PacketID};
+
+class InsteonParser extends Transform{
   /* Internal Variables */
   private debug: boolean;
   private started: boolean;
