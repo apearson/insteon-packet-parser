@@ -1,16 +1,18 @@
 /* Libraries */
 import {Transform} from 'stream';
-import {Packets, Packet, PacketID} from './Packets';
+import {PacketID} from './types';
+import {Parser, Parsers} from './Parsers';
+import * as Packets from './interfaces';
 
 /* Exports */
-export {InsteonParser, Packets, Packet, PacketID};
+export {Packets, PacketID};
 
-class InsteonParser extends Transform{
+export class InsteonParser extends Transform{
   /* Internal Variables */
   private debug: boolean;
   private started: boolean;
   private type: number | undefined;
-  private packet: Packet;
+  private packet: Parser;
 
   constructor(options = {debug: false, objectMode: true}){
     super(options);
@@ -21,7 +23,7 @@ class InsteonParser extends Transform{
     this.type = null;
     this.packet = null;
   }
-  
+
   _transform(chunk: Buffer, encoding: string, completed: ()=> void){
     if(this.debug){
       console.info(`Got chunk: ${chunk}`);
@@ -34,13 +36,18 @@ class InsteonParser extends Transform{
 
     /* Telling stream provider we have consumed the provided bytes with no errors*/
     completed();
-    
+
     if(this.debug){
       console.info('\n');
     }
   }
   _parseByte(byte: number){
     let command;
+
+    /* Debug Print out */
+    if(this.debug){
+      console.info(`Processing: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}`);
+    }
 
     /* Determing what needs to happen in packet */
     if(!this.started && byte === 0x02){
@@ -50,7 +57,7 @@ class InsteonParser extends Transform{
     else if(this.started && this.type == null){
       command = 'Grabbing packet type';
       this.type = byte;
-      this.packet = new Packets[byte]();
+      this.packet = new Parsers[byte]();
     }
     else if(this.started && this.packet != null && !this.packet.completed){
       command = 'Grabbing packet info';
@@ -58,11 +65,6 @@ class InsteonParser extends Transform{
     }
     else{
       command = 'Unknown Data';
-    }
-    
-    /* Debug Print out */
-    if(this.debug){
-      console.info(`Processing: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}`);
     }
 
     /* Checking for packet completed */
