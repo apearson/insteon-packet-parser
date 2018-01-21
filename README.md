@@ -1,7 +1,7 @@
 # InsteonPacketParser
-A simple Insteon packet parser to be used by [Node Serialport](https://github.com/EmergingTechnologyAdvisors/node-serialport) and a PowerLinc Modem (PLM) library or program. This library and it's API are still in beta and should not be trusted not to change until v1.
+A simple Insteon packet parser to be used by [Node Serialport](https://github.com/EmergingTechnologyAdvisors/node-serialport) and a PowerLinc Modem (PLM) library or program.
 
-If you see any problems, have any advice, or want to help out please open an issue. 
+If you see any problems, have any advice, or want to help out please open an issue.
 
 ## Examples
 
@@ -28,15 +28,15 @@ port.pipe(parser);
 parser.on('data', (data)=> console.info(data));
 
 /* Result
-  { 
+  {
     id: 0x73,
     type: 'Get IM Configuration',
     autoLinking: true,
     monitorMode: true,
     autoLED: true,
     deadman: true,
-    success: true 
-  } 
+    success: true
+  }
 */
 
 /* On serial port opened send command */
@@ -44,7 +44,7 @@ port.on('open', () => {
   const buf = Buffer.alloc(2);
         buf.writeUInt8(0x02, 0);
         buf.writeUInt8(0x73,1);
-        
+
   port.write(buf, (error) => {
     if(error){
       console.error(`Error: ${error}`);
