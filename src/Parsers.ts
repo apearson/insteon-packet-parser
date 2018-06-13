@@ -1045,7 +1045,7 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.device.push(byte);
 			}
 			else if(this.index > 8 && this.index < 12){
-				this.packet.device.push(byte);
+				this.packet.linkData.push(byte);
 			}
 			else if(this.index === 12){
 				if(byte === 0x06){
