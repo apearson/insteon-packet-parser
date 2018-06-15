@@ -1,8 +1,8 @@
 import {Byte} from './types';
+import { PacketID } from './types';
 
 export interface Packet{
-	type: Byte;
-	typeDesc: string;
+	type: PacketID;
 	[key: string]: any;
 }
 export interface DeviceMessage extends Packet{
@@ -13,7 +13,6 @@ export interface DeviceMessage extends Packet{
 	hopsLeft: number;
 	extended: boolean;
 	subtype: number;
-	subtypeDesc: string;
 	cmd1: Byte;
 	cmd2: Byte;
 }
@@ -36,7 +35,6 @@ export interface AllLinkingCompleted extends Packet{
 }
 export interface ButtonEventReport extends Packet{
 	event: Byte;
-	eventDesc: Byte;
 }
 export interface UserResetDetected extends Packet{
 }

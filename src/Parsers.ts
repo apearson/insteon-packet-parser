@@ -1,5 +1,6 @@
 /* Libraries */
-import { Packets } from './main';
+import * as Packets from './interfaces';
+import { PacketID, AllLinkRecordType } from './types';
 
 /* Packet abstract base class */
 export abstract class Parser{
@@ -18,7 +19,6 @@ export abstract class Parser{
 		/* Packet Data */
 		this.packet = {
 			type: 0x00,
-			typeDesc: 'Abstract Packet',
 		} as Packets.Packet;
 	}
 	bytesNeeded(){
@@ -36,8 +36,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x15,
-				typeDesc: 'Modem Not Ready'
+				type: PacketID.ModemNotReady,
 			};
 		}
 		parse(byte: number){
@@ -51,8 +50,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x50,
-				typeDesc: 'Standard Message Received',
+				type: PacketID.StandardMessageReceived,
 				from: [],
 				to: [],
 				flags: null,
@@ -60,7 +58,6 @@ export const Parsers: {[key: number]: any} = {
 				hopsLeft: null,
 				extended: false,
 				subtype: null,
-				subtypeDesc: null,
 				cmd1: null,
 				cmd2: null,
 			} as Packets.StandardMessageRecieved;
@@ -85,25 +82,6 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.extended = !!(byte & 16);
 				this.packet.subtype = ((byte & 224) >> 5);
 
-				/* Interpreting Meaning Flag */
-				switch(this.packet.subtype){
-					case 0:
-						this.packet.subtypeDesc = 'Direct Message'; break;
-					case 1:
-						this.packet.subtypeDesc = 'ACK of Direct Message'; break;
-					case 2:
-						this.packet.subtypeDesc = 'Group Cleanup Direct Message'; break;
-					case 3:
-						this.packet.subtypeDesc = 'ACK of Group Cleanup Direct Message'; break;
-					case 4:
-						this.packet.subtypeDesc = 'Broadcast Message'; break;
-					case 5:
-						this.packet.subtypeDesc = 'NAK of Direct Message'; break;
-					case 6:
-						this.packet.subtypeDesc = 'Group Broadcast Message'; break;
-					case 7:
-						this.packet.subtypeDesc = 'NAK of Group Cleanup Direct Message'; break;
-				}
 			}
 			else if (this.index == 10){
 				this.packet.cmd1 = byte;
@@ -125,8 +103,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x51,
-				typeDesc: 'Extended Message Received',
+				type: PacketID.ExtendedMessageReceived,
 				from: [],
 				to: [],
 				flags: null,
@@ -134,7 +111,6 @@ export const Parsers: {[key: number]: any} = {
 				hopsLeft: null,
 				extended: true,
 				subtype: 0x00,
-				subtypeDesc: null,
 				cmd1: null,
 				cmd2: null,
 				extendedData: [],
@@ -159,26 +135,6 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.hopsLeft = ((byte & 12) >> 2);
 				this.packet.extended = !!(byte & 16);
 				this.packet.subtype = ((byte & 224) >> 5);
-
-				/* Interpreting Meaning Flag */
-				switch(this.packet.subtype){
-					case 0:
-						this.packet.subtypeDesc = 'Direct Message'; break;
-					case 1:
-						this.packet.subtypeDesc = 'ACK of Direct Message'; break;
-					case 2:
-						this.packet.subtypeDesc = 'Group Cleanup Direct Message'; break;
-					case 3:
-						this.packet.subtypeDesc = 'ACK of Group Cleanup Direct Message'; break;
-					case 4:
-						this.packet.subtypeDesc = 'Broadcast Message'; break;
-					case 5:
-						this.packet.subtypeDesc = 'NAK of Direct Message'; break;
-					case 6:
-						this.packet.subtypeDesc = 'Group Broadcast Message'; break;
-					case 7:
-						this.packet.subtypeDesc = 'NAK of Group Cleanup Direct Message'; break;
-				}
 			}
 			else if (this.index == 10){
 				this.packet.cmd1 = byte;
@@ -203,8 +159,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x52,
-				typeDesc: 'X10 Received',
+				type: PacketID.X10Received,
 				rawX10: null,
 				X10Flag: null
 			} as Packets.x10Recieved;
@@ -234,8 +189,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x53,
-				typeDesc: 'ALL-Linking Completed',
+				type: PacketID.AllLinkingCompleted,
 				linkCode:  null,
 				allLinkGroup: null,
 				from:  [],
@@ -281,10 +235,8 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x54,
-				typeDesc: 'Button Event Report',
+				type: PacketID.ButtonEventReport,
 				event: 0x00,
-				eventDesc: null
 			} as Packets.ButtonEventReport;
 		}
 		parse(byte: number){
@@ -293,28 +245,6 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Determining where to place byte */
 			this.packet.event = byte;
-
-			/* Determining meaning of event byte */
-			switch(byte){
-				case 0x02:
-					this.packet.eventDesc = 'IM SET Button tapped'; break;
-				case 0x03:
-					this.packet.eventDesc = 'IM SET Button held'; break;
-				case 0x04:
-					this.packet.eventDesc = 'IM SET Button released after hold'; break;
-				case 0x12:
-					this.packet.eventDesc = 'IM Button 2 tapped'; break;
-				case 0x13:
-					this.packet.eventDesc = 'IM Button 2 held'; break;
-				case 0x14:
-					this.packet.eventDesc = 'IM Button 2 released after hold'; break;
-				case 0x22:
-					this.packet.eventDesc = 'IM Button 3 tapped'; break;
-				case 0x23:
-					this.packet.eventDesc = 'IM Button 3 held'; break;
-				case 0x24:
-					this.packet.eventDesc = 'IM Button 3 released after hold'; break;
-			}
 
 			/* Check no more data is need, call completed */
 			if(this.bytesNeeded() === 0){
@@ -329,8 +259,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x55,
-				typeDesc: 'User Reset Detected',
+				type: PacketID.UserResetDetected,
 			} as Packets.UserResetDetected;
 		}
 		parse(byte: number){
@@ -344,8 +273,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x56,
-				typeDesc: 'ALL-Link Cleanup Failure Report',
+				type: PacketID.AllLinkCleanupFailureReport,
 				allLinkGroup: null,
 				device: []
 			} as Packets.AllLinkCleanupFailureReport;
@@ -375,8 +303,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x57,
-				typeDesc: 'ALL-Link Record Response',
+				type: PacketID.AllLinkRecordResponse,
 				recordType: null,
 				allLinkGroup: null,
 				from:  [],
@@ -390,10 +317,10 @@ export const Parsers: {[key: number]: any} = {
 			/* Determining where to place byte */
 			if(this.index === 3){
 				if((byte & 64) != 0){
-					this.packet.recordType = 'Controller';
+					this.packet.recordType = AllLinkRecordType.Controller;
 				}
 				else {
-					this.packet.recordType = 'Responder';
+					this.packet.recordType = AllLinkRecordType.Responder;
 				}
 			}
 			else if(this.index === 4){
@@ -419,8 +346,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x58,
-				typeDesc: 'ALL-Link Cleanup Status Report',
+				type: PacketID.AllLinkCleanupStatusReport,
 				status: null
 			} as Packets.AllLinkCleanupStatusReport;
 		}
@@ -449,8 +375,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x60,
-				typeDesc: 'Get IM Info',
+				type: PacketID.GetIMInfo,
 				ID: [],
 				devcat: null,
 				subcat: null,
@@ -497,8 +422,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x61,
-				typeDesc: 'Send ALL-Link Command',
+				type: PacketID.SendAllLinkCommand,
 				allLinkGroup: null,
 				allLinkCommand:  null,
 				broadcastCommand2: null,
@@ -541,8 +465,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x62,
-				typeDesc: 'Send INSTEON Message',
+				type: PacketID.SendInsteonMessage,
 				extended: false,
 				to: [],
 				flags: null,
@@ -600,8 +523,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x63,
-				typeDesc: 'Send X10',
+				type: PacketID.SendX10,
 				rawX10: null,
 				X10Flag: null,
 				ack: null
@@ -640,8 +562,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x64,
-				typeDesc: 'Start ALL-Linking',
+				type: PacketID.StartAllLinking,
 				linkCode:  null,
 				allLinkGroup:  null,
 				ack:  null,
@@ -680,8 +601,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x65,
-				typeDesc: 'Cancel ALL-Linking',
+				type: PacketID.CancelAllLinking,
 				ack:  null
 			} as Packets.CancelAllLinking;
 		}
@@ -710,8 +630,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x66,
-				typeDesc: 'Set Host Device Category',
+				type: PacketID.SetHostDeviceCategory,
 				devcat: null,
 				subcat: null,
 				firmware: null,
@@ -754,8 +673,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x67,
-				typeDesc: 'Reset the IM',
+				type: PacketID.ResetIM,
 				ack: null
 			} as Packets.ResetIM;
 		}
@@ -784,8 +702,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x68,
-				typeDesc: 'Set ACK Message Byte',
+				type: PacketID.SetACKMessageByte,
 				cmd2:  null,
 				ack:  null,
 			} as Packets.SetACKMessageByte;
@@ -819,8 +736,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x69,
-				typeDesc: 'Get First ALL-Link Record',
+				type: PacketID.GetFirstAllLinkRecord,
 				ack:  null
 			} as Packets.GetFirstAllLinkRecord;
 		}
@@ -849,8 +765,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6A,
-				typeDesc: 'Get Next ALL-Link Record',
+				type: PacketID.GetNextAllLinkRecord,
 				ack: null
 			} as Packets.GetNextAllLinkRecord;
 		}
@@ -879,8 +794,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6B,
-				typeDesc: 'Set IM Configuration',
+				type: PacketID.SetIMConfiguration,
 				autoLinking: null,
 				monitorMode: null,
 				autoLED: null,
@@ -922,8 +836,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6C,
-				typeDesc: 'Get ALL-Link Record for Sender',
+				type: PacketID.GetAllLinkRecordForSender,
 				ack: null
 			} as Packets.GetAllLinkRecordforSender;
 		}
@@ -952,8 +865,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6D,
-				typeDesc: 'LED On',
+				type: PacketID.LEDOn,
 				ack: null
 			} as Packets.LEDOn;
 		}
@@ -982,8 +894,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6E,
-				typeDesc: 'LED Off',
+				type: PacketID.LEDOff,
 				ack: null
 			} as Packets.LEDOff;
 		}
@@ -1012,8 +923,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x6F,
-				typeDesc: 'Manage ALL-Link Record',
+				type: PacketID.ManageAllLinkRecord,
 				controlCode: null,
 				recordType: null,
 				allLinkGroup: null,
@@ -1032,10 +942,10 @@ export const Parsers: {[key: number]: any} = {
 			}
 			else if(this.index === 4){
 				if((byte & 64) != 0){
-					this.packet.recordType = 'Controller';
+					this.packet.recordType = AllLinkRecordType.Controller;
 				}
 				else {
-					this.packet.recordType = 'Responder';
+					this.packet.recordType = AllLinkRecordType.Responder;
 				}
 			}
 			else if(this.index === 5){
@@ -1069,8 +979,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x70,
-				typeDesc: 'Set NAK Message Byte',
+				type: PacketID.SetNAKMessageByte,
 				cmd2:  null,
 				ack:  null
 			} as Packets.SetNAKMessageByte;
@@ -1104,8 +1013,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x71,
-				typeDesc: 'Set ACK Message Two Bytes',
+				type: PacketID.SetACKMessageTwoBytes,
 				cmd1:  null,
 				cmd2:  null,
 				ack:  null
@@ -1143,8 +1051,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x72,
-				typeDesc: 'RF Sleep',
+				type: PacketID.RFSleep,
 				cmd1: null,
 				cmd2: null,
 				ack: null
@@ -1183,8 +1090,7 @@ export const Parsers: {[key: number]: any} = {
 
 			/* Packet Data */
 			this.packet = {
-				type: 0x73,
-				typeDesc: 'Get IM Configuration',
+				type: PacketID.GetIMConfiguration,
 				autoLinking: null,
 				monitorMode: null,
 				autoLED: null,

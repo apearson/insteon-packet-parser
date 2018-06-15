@@ -1,11 +1,75 @@
-export type PacketID = 
-0x15 | 
-0x50 | 0x51 | 0x52 | 0x53 | 0x54 | 0x55 | 0x56 | 0x57 | 0x58 |
-0x60 | 0x61 | 0x62 | 0x63 | 0x64 | 0x65 | 0x66 | 0x67 | 0x68 | 0x69 |
-0x6A | 0x6B | 0x6C | 0x6D | 0x6E | 0x6F |
-0x70 | 0x71 | 0x72 | 0x73;
+export enum AllLinkRecordType{
+	Controller = 0x01,
+	Responder = 0x00,
+}
 
-export type Byte = 
+export enum PacketID{
+	ModemNotReady = 0x15,
+
+	/* Commands Sent from an IM to the Host */
+	StandardMessageReceived     = 0x50,
+	ExtendedMessageReceived     = 0x51,
+	X10Received                 = 0x52,
+	AllLinkingCompleted         = 0x53,
+	ButtonEventReport           = 0x54,
+	UserResetDetected           = 0x55,
+	AllLinkCleanupFailureReport = 0x56,
+	AllLinkRecordResponse       = 0x57,
+	AllLinkCleanupStatusReport  = 0x58,
+
+	/* Commands Sent from the Host to an IM */
+	GetIMInfo                 = 0x60,
+	SendAllLinkCommand        = 0x61,
+	SendInsteonMessage        = 0x62,
+	SendX10                   = 0x63,
+	StartAllLinking           = 0x64,
+	CancelAllLinking          = 0x65,
+	SetHostDeviceCategory     = 0x66,
+	ResetIM                   = 0x67,
+	SetACKMessageByte         = 0x68,
+	GetFirstAllLinkRecord     = 0x69,
+	GetNextAllLinkRecord      = 0x6A,
+	SetIMConfiguration        = 0x6B,
+	GetAllLinkRecordForSender = 0x6C,
+	LEDOn                     = 0x6D,
+	LEDOff                    = 0x6E,
+	ManageAllLinkRecord       = 0x6F,
+	SetNAKMessageByte         = 0x70,
+	SetACKMessageTwoBytes     = 0x71,
+	RFSleep                   = 0x72,
+	GetIMConfiguration        = 0x73,
+}
+
+export enum MessageSubtype{
+	DirectMessage                  = 0x00,
+	ACKofDirectMessage             = 0x01,
+	GroupCleanupDirectMessage      = 0x02,
+	ACKofGroupCleanupDirectMessage = 0x03,
+	BroadcastMessage               = 0x04,
+	NAKofDirectMessage             = 0x05,
+	GroupBroadcastMessage          = 0x06,
+	NAKofGroupCleanupDirectMessage = 0x07,
+}
+
+export enum IMButtonEventType{
+	/* Set Button */
+	SetButtonTapped            = 0x02,
+	SetButtonHeld              = 0x03,
+	SetButtonReleasedAfterHold = 0x04,
+
+	/* Button 2 */
+	Button2Tapped            = 0x12,
+	Button2Held              = 0x13,
+	Button2ReleasedAfterHold = 0x14,
+
+	/* Button 3 */
+	Button3Tapped            = 0x22,
+	Button3Held              = 0x23,
+	Button3ReleasedAfterHold = 0x24,
+}
+
+
+export type Byte =
 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 | 0x08 | 0x09 | 0x0A | 0x0B | 0x0C | 0x0D | 0x0E | 0x0F |
 0x10 | 0x11 | 0x12 | 0x13 | 0x14 | 0x15 | 0x16 | 0x17 | 0x18 | 0x19 | 0x1A | 0x1B | 0x1C | 0x1D | 0x1E | 0x1F |
 0x20 | 0x21 | 0x22 | 0x23 | 0x24 | 0x25 | 0x26 | 0x27 | 0x28 | 0x29 | 0x2A | 0x2B | 0x2C | 0x2D | 0x2E | 0x2F |
