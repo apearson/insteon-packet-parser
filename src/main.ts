@@ -47,11 +47,6 @@ export class InsteonParser extends Transform{
 	_parseByte(byte: Byte){
 		let command;
 
-		/* Debug Print out */
-		if(this.debug){
-			console.info(`Processing: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}`);
-		}
-
 		/* Determing what needs to happen in packet */
 		if(!this.started && byte === 0x02){
 			command = 'Starting Packet';
@@ -68,6 +63,11 @@ export class InsteonParser extends Transform{
 		}
 		else{
 			command = 'Unknown Data';
+		}
+
+		/* Debug Print out */
+		if(this.debug){
+			console.info(`Processed: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}, Bytes Needed: ${this.packet? this.packet.bytesNeeded(): ''}, Complete: ${this.packet? this.packet.completed: ''}`);
 		}
 
 		/* Checking for packet completed */

@@ -486,7 +486,7 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.flags = byte;
 
 				/* Checking for extended packet */
-				if(byte & 0x08){
+				if(byte & 0x10){
 					this.packetLength = 23;
 					this.packet.extended = true;
 					this.packet.userData = [];
