@@ -25,6 +25,9 @@
     "url": "https://github.com/apearson/insteon-packet-parser/issues"
   },
   "homepage": "https://github.com/apearson/insteon-packet-parser#readme",
+  "files":[
+		"dist/"
+	],
   "devDependencies": {
     "@types/node": "^8.0.34",
     "typescript": "^2.5.3"
