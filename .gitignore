@@ -4,5 +4,8 @@
 #Node
 node_modules
 
+#Build
+tsconfig.tsbuildinfo
+
 #Distibution Files
 dist

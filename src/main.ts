@@ -17,7 +17,7 @@ export class InsteonParser extends Transform{
 	private type: number | undefined;
 	private packet: Parser;
 
-	constructor(options = {debug: false, objectMode: true}){
+	constructor(options = { debug: false, objectMode: true }){
 		super(options);
 
 		/* Parser internal variables */
