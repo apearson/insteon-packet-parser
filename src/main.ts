@@ -5,10 +5,10 @@ import {Parsers} from './Parsers';
 /* Interfaces and Types */
 import * as Packets from './interfaces';
 import {Parser} from './Parsers';
-import {PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType} from './types';
+import {PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, ManageAllLinkRecordOperation} from './types';
 
 /* Exports */
-export {Packets, PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType};
+export {Packets, PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, ManageAllLinkRecordOperation};
 
 export class InsteonParser extends Transform{
 	/* Internal Variables */
