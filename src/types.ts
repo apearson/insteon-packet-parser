@@ -1,6 +1,15 @@
 export enum AllLinkRecordType{
-	Controller = 0x01,
 	Responder = 0x00,
+	Controller = 0x01,
+}
+
+export enum ManageAllLinkRecordOperation {
+	FindFirst = 0x00,
+	FindNext = 0x01,
+	ModifyFirstFoundOrAdd = 0x20,
+	ModifyFirstControllerFoundOrAdd = 0x40,
+	ModifyFirstResponderFoundOrAdd = 0x41,
+	DeleteFirstFound = 0x80,
 }
 
 export enum PacketID{
@@ -67,7 +76,6 @@ export enum IMButtonEventType{
 	Button3Held              = 0x23,
 	Button3ReleasedAfterHold = 0x24,
 }
-
 
 export type Byte =
 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 | 0x08 | 0x09 | 0x0A | 0x0B | 0x0C | 0x0D | 0x0E | 0x0F |
