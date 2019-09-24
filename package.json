@@ -1,7 +1,7 @@
 {
   "name": "insteon-packet-parser",
-  "version": "3.1.2",
-  "description": "This is a serialport parser for parsing Insteon PLM data. ",
+  "version": "3.1.3",
+  "description": "A simple Insteon packet parser to be used by Node Serialport and a PowerLinc Modem (PLM) library or program",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "scripts": {
