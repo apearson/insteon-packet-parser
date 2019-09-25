@@ -4,19 +4,19 @@ import { PacketID, AllLinkRecordType } from './typings/enums';
 import { Byte } from './main';
 
 /* Packet abstract base class */
-export abstract class Parser {
+export class Parser {
 	/* Internal Variables */
-	public packetLength: number;
-	public index: number = 2;
+	public length: number;
+	public index: number;
 	public packet: Packets.Packet;
 
 	get completed() {
-		return this.index >= this.packetLength;
+		return this.index >= this.length;
 	}
 
 	constructor(length: number, index: number){
 		/* Packet metadata */
-		this.packetLength = length;
+		this.length = length;
 		this.index = index;
 
 		/* Packet Data */
@@ -32,7 +32,8 @@ export abstract class Parser {
 export const Parsers: {[key: number]: any} = {
 	0x15: class extends Parser {
 		/* Packet Meta */
-		packetLength = 2;
+		length = 2;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.Packet = {
@@ -46,7 +47,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x50: class extends Parser {
 		/* Packet Meta */
-		packetLength = 11;
+		length = 11;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.StandardMessageRecieved = {
@@ -98,7 +100,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x51: class extends Parser {
 		/* Packet Meta */
-		packetLength = 25;
+		length = 25;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.ExtendedMessageRecieved = {
@@ -154,7 +157,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x52: class extends Parser {
 		/* Packet Meta */
-		packetLength = 4;
+		length = 4;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.x10Recieved = {
@@ -179,7 +183,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x53: class extends Parser {
 		/* Packet Meta */
-		packetLength = 10;
+		length = 10;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.AllLinkingCompleted = {
@@ -220,7 +225,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x54: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.ButtonEventReport = {
@@ -239,7 +245,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x55: class extends Parser {
 		/* Packet Meta */
-		packetLength = 2;
+		length = 2;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.UserResetDetected = {
@@ -253,7 +260,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x56: class extends Parser {
 		/* Packet Meta */
-		packetLength = 7;
+		length = 7;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.AllLinkCleanupFailureReport = {
@@ -278,7 +286,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x57: class extends Parser {
 		/* Packet Meta */
-		packetLength = 10;
+		length = 10;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.AllLinkRecordResponse = {
@@ -322,7 +331,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x58: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.AllLinkCleanupStatusReport = {
@@ -346,7 +356,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x60: class extends Parser {
 		/* Packet Meta */
-		packetLength = 9;
+		length = 9;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.GetIMInfo = {
@@ -388,7 +399,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x61: class extends Parser {
 		/* Packet Meta */
-		packetLength = 6;
+		length = 6;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SendAllLinkCommand = {
@@ -426,7 +438,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x62: class extends Parser {
 		/* Packet Meta */
-		packetLength = 9;
+		length = 9;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SendInsteonMessage = {
@@ -461,7 +474,7 @@ export const Parsers: {[key: number]: any} = {
 
 				/* Checking for extended packet */
 				if(this.packet.Flags.extended){
-					this.packetLength = 23;
+					this.length = 23;
 					this.packet.extended = true;
 					this.packet.userData = [];
 				}
@@ -487,7 +500,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x63: class extends Parser {
 		/* Packet Meta */
-		packetLength = 5;
+		length = 5;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SendX10 = {
@@ -521,7 +535,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x64: class extends Parser {
 		/* Packet Meta */
-		packetLength = 5;
+		length = 5;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.StartAllLinking = {
@@ -555,7 +570,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x65: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.CancelAllLinking = {
@@ -579,7 +595,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x66: class extends Parser {
 		/* Packet Meta */
-		packetLength = 6;
+		length = 6;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SetHostDeviceCategory = {
@@ -617,7 +634,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x67: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.ResetIM = {
@@ -641,7 +659,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x68: class extends Parser {
 		/* Packet Meta */
-		packetLength = 4;
+		length = 4;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SetACKMessageByte = {
@@ -670,7 +689,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x69: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.GetFirstAllLinkRecord = {
@@ -694,7 +714,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6A: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.GetNextAllLinkRecord = {
@@ -718,7 +739,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6B: class extends Parser {
 		/* Packet Meta */
-		packetLength = 4;
+		length = 4;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SetIMConfiguration = {
@@ -762,7 +784,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6C: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.GetAllLinkRecordforSender = {
@@ -786,7 +809,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6D: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.LEDOn = {
@@ -810,7 +834,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6E: class extends Parser {
 		/* Packet Meta */
-		packetLength = 3;
+		length = 3;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.LEDOff = {
@@ -834,7 +859,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x6F: class extends Parser {
 		/* Packet Meta */
-		packetLength = 12;
+		length = 12;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.ManageAllLinkRecord = {
@@ -888,7 +914,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x70: class extends Parser {
 		/* Packet Meta */
-		packetLength = 4;
+		length = 4;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SetNAKMessageByte = {
@@ -917,7 +944,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x71: class extends Parser {
 		/* Packet Meta */
-		packetLength = 5;
+		length = 5;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.SetACKMessageTwoBytes = {
@@ -950,7 +978,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x72: class extends Parser {
 		/* Packet Meta */
-		packetLength = 5;
+		length = 5;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.RFSleep = {
@@ -984,7 +1013,8 @@ export const Parsers: {[key: number]: any} = {
 	},
 	0x73: class extends Parser {
 		/* Packet Meta */
-		packetLength = 6;
+		length = 6;
+		index = 2;
 
 		/* Packet */
 		packet: Packets.GetIMConfiguration = {

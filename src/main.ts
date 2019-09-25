@@ -64,7 +64,7 @@ export class InsteonParser extends Transform{
 
 		/* Debug Print out */
 		if(this.debug){
-			console.info(`Processed: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}, Bytes Needed: ${this.packet.packetLength - this.packet.index}, Complete: ${this.packet? this.packet.completed: ''}`);
+			console.info(`Processed: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command} | Index: ${this.packet? this.packet.index: ''} | Length: ${this.packet? this.packet.length: ''} | Bytes Needed: ${this.packet? (this.packet.length - this.packet.index) : ''} | Complete: ${this.packet? this.packet.completed: ''}`);
 		}
 
 		/* Checking for packet completed */
