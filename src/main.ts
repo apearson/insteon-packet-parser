@@ -1,30 +1,27 @@
 /* Libraries */
-import {Transform} from 'stream';
-import {Parsers} from './Parsers';
+import { Transform } from 'stream';
+import { Parsers, Parser } from './Parsers';
 
 /* Interfaces and Types */
-import * as Packets from './interfaces';
-import {Parser} from './Parsers';
-import {PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, ManageAllLinkRecordOperation} from './types';
+import * as Packets from './typings/interfaces';
+import { Byte } from './typings/types';
+import { PacketID, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation } from './typings/enums';
 
 /* Exports */
-export {Packets, PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, ManageAllLinkRecordOperation};
+export { Packets, PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
 
 export class InsteonParser extends Transform{
 	/* Internal Variables */
-	private debug: boolean;
-	private started: boolean;
-	private type: number | undefined;
-	private packet: Parser;
+	private debug: boolean = false;
+	private started: boolean = false;
+	private type?: number = null;
+	private packet: Parser = null;
 
 	constructor(options = { debug: false, objectMode: true }){
 		super(options);
 
 		/* Parser internal variables */
 		this.debug = options.debug;
-		this.started = false;
-		this.type = null;
-		this.packet = null;
 	}
 
 	_transform(chunk: Buffer, encoding: string, completed: ()=> void){
@@ -67,7 +64,7 @@ export class InsteonParser extends Transform{
 
 		/* Debug Print out */
 		if(this.debug){
-			console.info(`Processed: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}, Bytes Needed: ${this.packet? this.packet.bytesNeeded(): ''}, Complete: ${this.packet? this.packet.completed: ''}`);
+			console.info(`Processed: 0x${('0'+(byte).toString(16)).slice(-2).toUpperCase()}, Command: ${command}, Bytes Needed: ${this.packet.packetLength - this.packet.index}, Complete: ${this.packet? this.packet.completed: ''}`);
 		}
 
 		/* Checking for packet completed */
