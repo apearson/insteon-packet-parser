@@ -8,7 +8,7 @@ import { Byte } from './typings/types';
 import { PacketID, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation } from './typings/enums';
 
 /* Exports */
-export { Packets, PacketID, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
+export { PacketID, Packets,  Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
 
 export class InsteonParser extends Transform{
 	/* Internal Variables */
