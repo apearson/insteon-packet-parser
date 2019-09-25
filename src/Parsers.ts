@@ -1,68 +1,71 @@
 /* Libraries */
-import * as Packets from './interfaces';
-import { PacketID, AllLinkRecordType } from './types';
+import * as Packets from './typings/interfaces';
+import { PacketID, AllLinkRecordType } from './typings/enums';
+import { Byte } from './main';
 
 /* Packet abstract base class */
-export abstract class Parser{
+export abstract class Parser {
 	/* Internal Variables */
 	public packetLength: number;
-	public index: number;
-	public completed: boolean;
+	public index: number = 2;
 	public packet: Packets.Packet;
 
-	constructor(length: number, index: number, completed:boolean){
+	get completed() {
+		return this.index >= this.packetLength;
+	}
+
+	constructor(length: number, index: number){
 		/* Packet metadata */
 		this.packetLength = length;
 		this.index = index;
-		this.completed = completed;
 
 		/* Packet Data */
 		this.packet = {
-			type: 0x00,
-		} as Packets.Packet;
+			type: 0x00
+		};
 	}
-	bytesNeeded(){
-		return this.packetLength - this.index;
-	}
-	parse(byte: number): void {}
+
+	parse(byte: Byte): void {}
 }
 
 /* Packet Parsing Classes */
 export const Parsers: {[key: number]: any} = {
-	0x15:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(2, 2, true);
+	0x15: class extends Parser {
+		/* Packet Meta */
+		packetLength = 2;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.ModemNotReady,
-			};
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.Packet = {
+			type: PacketID.ModemNotReady,
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			return byte;
 		}
 	},
-	0x50:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(11, 2, false);
+	0x50: class extends Parser {
+		/* Packet Meta */
+		packetLength = 11;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.StandardMessageReceived,
-				from: [],
-				to: [],
-				flags: null,
-				maxHops: null,
+		/* Packet */
+		packet: Packets.StandardMessageRecieved = {
+			type: PacketID.StandardMessageReceived,
+			from: [],
+			to: [],
+			flags: null,
+			Flags: {
+				extended: null,
 				hopsLeft: null,
-				extended: false,
+				maxHops: null,
 				subtype: null,
-				cmd1: null,
-				cmd2: null,
-			} as Packets.StandardMessageRecieved;
-		}
-		parse(byte: number){
+			},
+			cmd1: null,
+			cmd2: null,
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -77,10 +80,12 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.flags = byte;
 
 				/* Reading Flags */
-				this.packet.maxHops = (byte & 3);
-				this.packet.hopsLeft = ((byte & 12) >> 2);
-				this.packet.extended = !!(byte & 16);
-				this.packet.subtype = ((byte & 224) >> 5);
+				this.packet.Flags = {
+					maxHops: (byte & 3),
+					hopsLeft: ((byte & 12) >> 2),
+					extended: !!(byte & 16),
+					subtype: ((byte & 224) >> 5)
+				}
 
 			}
 			else if (this.index == 10){
@@ -89,34 +94,31 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index == 11){
 				this.packet.cmd2 = byte;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x51:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(25, 2, false);
+	0x51: class extends Parser {
+		/* Packet Meta */
+		packetLength = 25;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.ExtendedMessageReceived,
-				from: [],
-				to: [],
-				flags: null,
-				maxHops: null,
+		/* Packet */
+		packet: Packets.ExtendedMessageRecieved = {
+			type: PacketID.ExtendedMessageReceived,
+			from: [],
+			to: [],
+			flags: null,
+			Flags: {
+				extended: null,
 				hopsLeft: null,
-				extended: true,
-				subtype: 0x00,
-				cmd1: null,
-				cmd2: null,
-				extendedData: [],
-			} as Packets.ExtendedMessageRecieved;
-		}
-		parse(byte: number){
+				maxHops: null,
+				subtype: null,
+			},
+			cmd1: null,
+			cmd2: null,
+			extendedData: [],
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -131,10 +133,13 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.flags = byte;
 
 				/* Reading Flags */
-				this.packet.maxHops = (byte & 3);
-				this.packet.hopsLeft = ((byte & 12) >> 2);
-				this.packet.extended = !!(byte & 16);
-				this.packet.subtype = ((byte & 224) >> 5);
+				this.packet.Flags = {
+					maxHops: (byte & 3),
+					hopsLeft: ((byte & 12) >> 2),
+					extended: !!(byte & 16),
+					subtype: ((byte & 224) >> 5)
+				}
+
 			}
 			else if (this.index == 10){
 				this.packet.cmd1 = byte;
@@ -145,26 +150,21 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index >= 12 && this.index <= 25){
 				this.packet.extendedData.push(byte);
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x52:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(4, 2, false);
+	0x52: class extends Parser {
+		/* Packet Meta */
+		packetLength = 4;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.X10Received,
-				rawX10: null,
-				X10Flag: null
-			} as Packets.x10Recieved;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.x10Recieved = {
+			type: PacketID.X10Received,
+			rawX10: null,
+			X10Flag: null
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -175,30 +175,25 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index === 4){
 				this.packet.x10Flag = byte;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x53:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(10, 2, false);
+	0x53: class extends Parser {
+		/* Packet Meta */
+		packetLength = 10;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.AllLinkingCompleted,
-				linkCode:  null,
-				allLinkGroup: null,
-				from:  [],
-				devcat: null,
-				subcat: null,
-				firmware: null
-			} as Packets.AllLinkingCompleted;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.AllLinkingCompleted = {
+			type: PacketID.AllLinkingCompleted,
+			linkCode:  null,
+			allLinkGroup: null,
+			from:  [],
+			devcat: null,
+			subcat: null,
+			firmware: null
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -221,64 +216,54 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index === 10){
 				this.packet.firmware = byte;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x54:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x54: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.ButtonEventReport,
-				event: 0x00,
-			} as Packets.ButtonEventReport;
+		/* Packet */
+		packet: Packets.ButtonEventReport = {
+			type: PacketID.ButtonEventReport,
+			event: 0x00,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
 			/* Determining where to place byte */
 			this.packet.event = byte;
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x55:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(2, 2, true);
+	0x55: class extends Parser {
+		/* Packet Meta */
+		packetLength = 2;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.UserResetDetected,
-			} as Packets.UserResetDetected;
+		/* Packet */
+		packet: Packets.UserResetDetected = {
+			type: PacketID.UserResetDetected,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			return byte;
 		}
 	},
-	0x56:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(7, 2, false);
+	0x56: class extends Parser {
+		/* Packet Meta */
+		packetLength = 7;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.AllLinkCleanupFailureReport,
-				allLinkGroup: null,
-				device: []
-			} as Packets.AllLinkCleanupFailureReport;
+		/* Packet */
+		packet: Packets.AllLinkCleanupFailureReport = {
+			type: PacketID.AllLinkCleanupFailureReport,
+			allLinkGroup: null,
+			device: []
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -289,38 +274,39 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index >= 5 && this.index <= 7){
 				this.packet.device.push(byte);
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x57:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(10, 2, false);
+	0x57: class extends Parser {
+		/* Packet Meta */
+		packetLength = 10;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.AllLinkRecordResponse,
-				recordType: null,
-				allLinkGroup: null,
-				from:  [],
-				linkData:  []
-			} as Packets.AllLinkRecordResponse;
+		/* Packet */
+		packet: Packets.AllLinkRecordResponse = {
+			type: PacketID.AllLinkRecordResponse,
+			allLinkGroup: null,
+			flags: null,
+			Flags: {
+				inUse: false,
+				recordType: AllLinkRecordType.Controller
+			},
+			from:  [],
+			linkData:  []
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
 			/* Determining where to place byte */
 			if(this.index === 3){
-				if((byte & 64) != 0){
-					this.packet.recordType = AllLinkRecordType.Controller;
-				}
-				else {
-					this.packet.recordType = AllLinkRecordType.Responder;
+
+				this.packet.flags = byte;
+
+				this.packet.Flags = {
+					inUse: ((byte & 12) != 0),
+					recordType: ((byte & 64) != 0) ? AllLinkRecordType.Controller
+					                               : AllLinkRecordType.Responder
 				}
 			}
 			else if(this.index === 4){
@@ -332,25 +318,20 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index >= 8 && this.index <= 10){
 				this.packet.linkData.push(byte);
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x58:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x58: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.AllLinkCleanupStatusReport,
-				status: null
-			} as Packets.AllLinkCleanupStatusReport;
+		/* Packet */
+		packet: Packets.AllLinkCleanupStatusReport = {
+			type: PacketID.AllLinkCleanupStatusReport,
+			status: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -361,29 +342,24 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.status = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x60:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(9, 2, false);
+	0x60: class extends Parser {
+		/* Packet Meta */
+		packetLength = 9;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.GetIMInfo,
-				ID: [],
-				devcat: null,
-				subcat: null,
-				firmware: null,
-				ack: null
-			} as Packets.GetIMInfo;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.GetIMInfo = {
+			type: PacketID.GetIMInfo,
+			ID: [],
+			devcat: null,
+			subcat: null,
+			firmware: null,
+			ack: null
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -408,28 +384,23 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x61:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(6, 2, false);
+	0x61: class extends Parser {
+		/* Packet Meta */
+		packetLength = 6;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SendAllLinkCommand,
-				allLinkGroup: null,
-				allLinkCommand:  null,
-				broadcastCommand2: null,
-				ack: null,
-			} as Packets.SendAllLinkCommand;
+		/* Packet */
+		packet: Packets.SendAllLinkCommand = {
+			type: PacketID.SendAllLinkCommand,
+			allLinkGroup: null,
+			allLinkCommand:  null,
+			broadcastCommand2: null,
+			ack: null,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -451,30 +422,25 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x62:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(9, 2, false);
+	0x62: class extends Parser {
+		/* Packet Meta */
+		packetLength = 9;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SendInsteonMessage,
-				extended: false,
-				to: [],
-				flags: null,
-				cmd1: null,
-				cmd2: null,
-				ack: null
-			} as Packets.SendInsteonMessage;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.SendInsteonMessage = {
+			type: PacketID.SendInsteonMessage,
+			extended: false,
+			to: [],
+			flags: null,
+			cmd1: null,
+			cmd2: null,
+			ack: null
+		} 
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -485,8 +451,16 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index === 6){
 				this.packet.flags = byte;
 
+				/* Reading Flags */
+				this.packet.Flags = {
+					maxHopes: (byte & 3),
+					hopsLeft: ((byte & 12) >> 2),
+					extended: !!(byte & 16),
+					subtype: ((byte & 224) >> 5)
+				}
+
 				/* Checking for extended packet */
-				if(byte & 0x10){
+				if(this.packet.Flags.extended){
 					this.packetLength = 23;
 					this.packet.extended = true;
 					this.packet.userData = [];
@@ -509,27 +483,22 @@ export const Parsers: {[key: number]: any} = {
 			else if(this.index >= 10){
 				this.packet.userData.push(byte);
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x63:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(5, 2, false);
+	0x63: class extends Parser {
+		/* Packet Meta */
+		packetLength = 5;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SendX10,
-				rawX10: null,
-				X10Flag: null,
-				ack: null
-			} as Packets.SendX10;
+		/* Packet */
+		packet: Packets.SendX10 = {
+			type: PacketID.SendX10,
+			rawX10: null,
+			X10Flag: null,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -548,27 +517,22 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x64:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(5, 2, false);
+	0x64: class extends Parser {
+		/* Packet Meta */
+		packetLength = 5;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.StartAllLinking,
-				linkCode:  null,
-				allLinkGroup:  null,
-				ack:  null,
-			} as Packets.StartAllLinking;
+		/* Packet */
+		packet: Packets.StartAllLinking = {
+			type: PacketID.StartAllLinking,
+			linkCode:  null,
+			allLinkGroup:  null,
+			ack:  null,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -587,25 +551,20 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x65:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x65: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.CancelAllLinking,
-				ack:  null
-			} as Packets.CancelAllLinking;
+		/* Packet */
+		packet: Packets.CancelAllLinking = {
+			type: PacketID.CancelAllLinking,
+			ack:  null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -616,28 +575,23 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x66:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(6, 2, false);
+	0x66: class extends Parser {
+		/* Packet Meta */
+		packetLength = 6;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SetHostDeviceCategory,
-				devcat: null,
-				subcat: null,
-				firmware: null,
-				ack: null
-			} as Packets.SetHostDeviceCategory;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.SetHostDeviceCategory = {
+			type: PacketID.SetHostDeviceCategory,
+			devcat: null,
+			subcat: null,
+			firmware: null,
+			ack: null
+		} 
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -659,25 +613,20 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x67:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x67: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.ResetIM,
-				ack: null
-			} as Packets.ResetIM;
+		/* Packet */
+		packet: Packets.ResetIM = {
+			type: PacketID.ResetIM,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -688,26 +637,21 @@ export const Parsers: {[key: number]: any} = {
 			else  if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x68:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(4, 2, false);
+	0x68: class extends Parser {
+		/* Packet Meta */
+		packetLength = 4;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SetACKMessageByte,
-				cmd2:  null,
-				ack:  null,
-			} as Packets.SetACKMessageByte;
+		/* Packet */
+		packet: Packets.SetACKMessageByte = {
+			type: PacketID.SetACKMessageByte,
+			cmd2:  null,
+			ack:  null,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -722,25 +666,20 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x69:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x69: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.GetFirstAllLinkRecord,
-				ack:  null
-			} as Packets.GetFirstAllLinkRecord;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.GetFirstAllLinkRecord = {
+			type: PacketID.GetFirstAllLinkRecord,
+			ack:  null
+		} 
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -751,25 +690,20 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6A:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x6A: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.GetNextAllLinkRecord,
-				ack: null
-			} as Packets.GetNextAllLinkRecord;
+		/* Packet */
+		packet: Packets.GetNextAllLinkRecord = {
+			type: PacketID.GetNextAllLinkRecord,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -780,39 +714,41 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6B:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(4, 2, false);
+	0x6B: class extends Parser {
+		/* Packet Meta */
+		packetLength = 4;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SetIMConfiguration,
+		/* Packet */
+		packet: Packets.SetIMConfiguration = {
+			type: PacketID.SetIMConfiguration,
+			flags: null,
+			Flags: {
 				autoLinking: null,
 				monitorMode: null,
 				autoLED: null,
 				deadman: null,
-				ack:  null
-			} as Packets.SetIMConfiguration;
-		}
-		parse(byte: number){
+			},
+			ack:  null
+		};
+
+		/* Parsing byte */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
 			/* Determining where to place byte */
 			if(this.index === 3){
-				/* Reading Flags */
-				this.packet.autoLinking = !(byte & 128);
-				this.packet.monitorMode = !!(byte & 64);
-				this.packet.autoLED = !(byte & 32);
-				this.packet.deadman = !(byte & 16);
+
+				this.packet.flags = byte;
+
+				this.packet.Flags = {
+					autoLinking: !(byte & 128),
+					monitorMode: !!(byte & 64),
+					autoLED: !(byte & 32),
+					deadman: !(byte & 16)
+				}
 			}
 			else if(this.index === 4){
 				if(byte === 0x06){
@@ -822,25 +758,20 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6C:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x6C: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.GetAllLinkRecordForSender,
-				ack: null
-			} as Packets.GetAllLinkRecordforSender;
+		/* Packet */
+		packet: Packets.GetAllLinkRecordforSender = {
+			type: PacketID.GetAllLinkRecordForSender,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -851,25 +782,20 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6D:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x6D: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.LEDOn,
-				ack: null
-			} as Packets.LEDOn;
+		/* Packet */
+		packet: Packets.LEDOn = {
+			type: PacketID.LEDOn,
+			ack: null
 		}
-		parse(byte: number){
+		
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -880,25 +806,20 @@ export const Parsers: {[key: number]: any} = {
 			else{
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6E:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(3, 2, false);
+	0x6E: class extends Parser {
+		/* Packet Meta */
+		packetLength = 3;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.LEDOff,
-				ack: null
-			} as Packets.LEDOff;
+		/* Packet */
+		packet: Packets.LEDOff = {
+			type: PacketID.LEDOff,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -909,30 +830,28 @@ export const Parsers: {[key: number]: any} = {
 			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x6F:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(12, 2, false);
+	0x6F: class extends Parser {
+		/* Packet Meta */
+		packetLength = 12;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.ManageAllLinkRecord,
-				controlCode: null,
+		/* Packet */
+		packet: Packets.ManageAllLinkRecord = {
+			type: PacketID.ManageAllLinkRecord,
+			controlCode: null,
+			flags: null,
+			Flags: {
 				recordType: null,
-				allLinkGroup: null,
-				device: [],
-				linkData: [],
-				ack: null,
-			} as Packets.ManageAllLinkRecord;
+			},
+			allLinkGroup: null,
+			device: [],
+			linkData: [],
+			ack: null,
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -941,11 +860,11 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.controlCode = byte;
 			}
 			else if(this.index === 4){
-				if((byte & 64) != 0){
-					this.packet.recordType = AllLinkRecordType.Controller;
-				}
-				else {
-					this.packet.recordType = AllLinkRecordType.Responder;
+
+				this.packet.flags = byte;
+				this.packet.Flags = {
+					recordType: ((byte & 64) != 0) ? AllLinkRecordType.Controller
+					                               : AllLinkRecordType.Responder
 				}
 			}
 			else if(this.index === 5){
@@ -965,26 +884,21 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x70:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(4, 2, false);
+	0x70: class extends Parser {
+		/* Packet Meta */
+		packetLength = 4;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SetNAKMessageByte,
-				cmd2:  null,
-				ack:  null
-			} as Packets.SetNAKMessageByte;
+		/* Packet */
+		packet: Packets.SetNAKMessageByte = {
+			type: PacketID.SetNAKMessageByte,
+			cmd2:  null,
+			ack:  null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -999,27 +913,22 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x71:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(5, 2, false);
+	0x71: class extends Parser {
+		/* Packet Meta */
+		packetLength = 5;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.SetACKMessageTwoBytes,
-				cmd1:  null,
-				cmd2:  null,
-				ack:  null
-			} as Packets.SetACKMessageTwoBytes;
-		}
-		parse(byte: number){
+		/* Packet */
+		packet: Packets.SetACKMessageTwoBytes = {
+			type: PacketID.SetACKMessageTwoBytes,
+			cmd1:  null,
+			cmd2:  null,
+			ack:  null
+		};
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -1037,27 +946,22 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x72:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(5, 2, false);
+	0x72: class extends Parser {
+		/* Packet Meta */
+		packetLength = 5;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.RFSleep,
-				cmd1: null,
-				cmd2: null,
-				ack: null
-			} as Packets.RFSleep;
+		/* Packet */
+		packet: Packets.RFSleep = {
+			type: PacketID.RFSleep,
+			cmd1: null,
+			cmd2: null,
+			ack: null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
@@ -1076,39 +980,41 @@ export const Parsers: {[key: number]: any} = {
 					this.packet.ack = false;
 				}
 			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
-			}
 		}
 	},
-	0x73:class extends Parser{
-		constructor(){
-			/* Constructing super class */
-			super(6, 2, false);
+	0x73: class extends Parser {
+		/* Packet Meta */
+		packetLength = 6;
 
-			/* Packet Data */
-			this.packet = {
-				type: PacketID.GetIMConfiguration,
-				autoLinking: null,
-				monitorMode: null,
+		/* Packet */
+		packet: Packets.GetIMConfiguration = {
+			type: PacketID.GetIMConfiguration,
+			flags: null,
+			Flags: {
 				autoLED: null,
+				autoLinking: null,
 				deadman: null,
-				ack:  null
-			} as Packets.GetIMConfiguration;
+				monitorMode: null
+			},
+			ack:  null
 		}
-		parse(byte: number){
+
+		/* Parser */
+		parse(byte: Byte){
 			/* Moving to next index */
 			this.index++;
 
 			/* Determining where to place byte */
 			if(this.index === 3){
-				/* Reading Flags */
-				this.packet.autoLinking = !(byte & 128);
-				this.packet.monitorMode = !!(byte & 64);
-				this.packet.autoLED = !(byte & 32);
-				this.packet.deadman = !(byte & 16);
+
+				this.packet.flags = byte;
+
+				this.packet.Flags = {
+					autoLinking: !(byte & 128),
+					monitorMode: !!(byte & 64),
+					autoLED: !(byte & 32),
+					deadman: !(byte & 16)
+				}
 			}
 			else if(this.index === 6){
 				if(byte === 0x06){
@@ -1117,11 +1023,6 @@ export const Parsers: {[key: number]: any} = {
 				else if(byte === 0x15){
 					this.packet.ack = false;
 				}
-			}
-
-			/* Check no more data is need, call completed */
-			if(this.bytesNeeded() === 0){
-				this.completed = true;
 			}
 		}
 	}
