@@ -4,6 +4,7 @@ import { Byte } from './types';
 
 export interface Packet {
 	type: PacketID;
+	Type: string;
 	[key: string]: any;
 }
 export interface DeviceMessage extends Packet {
@@ -15,6 +16,7 @@ export interface DeviceMessage extends Packet {
 		hopsLeft: number;
 		extended: boolean;
 		subtype: MessageSubtype;
+		Subtype: string;
 	};
 	cmd1: Byte;
 	cmd2: Byte;
