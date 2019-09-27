@@ -1,5 +1,5 @@
 /* Libraries */
-import { PacketID, AllLinkRecordType } from './enums';
+import { PacketID, AllLinkRecordType, MessageSubtype } from './enums';
 import { Byte } from './types';
 
 export interface Packet {
@@ -14,7 +14,7 @@ export interface DeviceMessage extends Packet {
 		maxHops: number;
 		hopsLeft: number;
 		extended: boolean;
-		subtype: number;
+		subtype: MessageSubtype;
 	};
 	cmd1: Byte;
 	cmd2: Byte;
