@@ -13,7 +13,7 @@ export class Parser {
 	get completed() {
 		return this.index >= this.length;
 	}
-
+ 
 	constructor(length: number, index: number){
 		/* Packet metadata */
 		this.length = length;
@@ -38,6 +38,8 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.Packet = {
 			type: PacketID.ModemNotReady,
+			Type: PacketID[PacketID.ModemNotReady].replace(/([A-Z])/g, ' $1'),
+
 		};
 
 		/* Parser */
@@ -53,6 +55,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.StandardMessageRecieved = {
 			type: PacketID.StandardMessageReceived,
+			Type: PacketID[PacketID.StandardMessageReceived].replace(/([A-Z])/g, ' $1'),
 			from: [],
 			to: [],
 			flags: null,
@@ -106,6 +109,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.ExtendedMessageRecieved = {
 			type: PacketID.ExtendedMessageReceived,
+			Type: PacketID[PacketID.ExtendedMessageReceived].replace(/([A-Z])/g, ' $1'),
 			from: [],
 			to: [],
 			flags: null,
@@ -163,6 +167,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.x10Recieved = {
 			type: PacketID.X10Received,
+			Type: PacketID[PacketID.X10Received].replace(/([A-Z])/g, ' $1'),
 			rawX10: null,
 			X10Flag: null
 		};
@@ -189,6 +194,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.AllLinkingCompleted = {
 			type: PacketID.AllLinkingCompleted,
+			Type: PacketID[PacketID.AllLinkingCompleted].replace(/([A-Z])/g, ' $1'),
 			linkCode:  null,
 			allLinkGroup: null,
 			from:  [],
@@ -231,6 +237,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.ButtonEventReport = {
 			type: PacketID.ButtonEventReport,
+			Type: PacketID[PacketID.ButtonEventReport].replace(/([A-Z])/g, ' $1'),
 			event: 0x00,
 		}
 
@@ -251,6 +258,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.UserResetDetected = {
 			type: PacketID.UserResetDetected,
+			Type: PacketID[PacketID.UserResetDetected].replace(/([A-Z])/g, ' $1'),
 		}
 
 		/* Parser */
@@ -266,6 +274,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.AllLinkCleanupFailureReport = {
 			type: PacketID.AllLinkCleanupFailureReport,
+			Type: PacketID[PacketID.AllLinkCleanupFailureReport].replace(/([A-Z])/g, ' $1'),
 			allLinkGroup: null,
 			device: []
 		}
@@ -292,6 +301,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.AllLinkRecordResponse = {
 			type: PacketID.AllLinkRecordResponse,
+			Type: PacketID[PacketID.AllLinkRecordResponse].replace(/([A-Z])/g, ' $1'),
 			allLinkGroup: null,
 			flags: null,
 			Flags: {
@@ -337,6 +347,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.AllLinkCleanupStatusReport = {
 			type: PacketID.AllLinkCleanupStatusReport,
+			Type: PacketID[PacketID.AllLinkCleanupStatusReport].replace(/([A-Z])/g, ' $1'),
 			status: null
 		}
 
@@ -362,6 +373,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.GetIMInfo = {
 			type: PacketID.GetIMInfo,
+			Type: PacketID[PacketID.GetIMInfo].replace(/([A-Z])/g, ' $1'),
 			ID: [],
 			devcat: null,
 			subcat: null,
@@ -405,6 +417,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SendAllLinkCommand = {
 			type: PacketID.SendAllLinkCommand,
+			Type: PacketID[PacketID.SendAllLinkCommand].replace(/([A-Z])/g, ' $1'),
 			allLinkGroup: null,
 			allLinkCommand:  null,
 			broadcastCommand2: null,
@@ -444,6 +457,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SendInsteonMessage = {
 			type: PacketID.SendInsteonMessage,
+			Type: PacketID[PacketID.SendInsteonMessage].replace(/([A-Z])/g, ' $1'),
 			extended: false,
 			to: [],
 			flags: null,
@@ -506,6 +520,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SendX10 = {
 			type: PacketID.SendX10,
+			Type: PacketID[PacketID.SendX10].replace(/([A-Z])/g, ' $1'),
 			rawX10: null,
 			X10Flag: null,
 			ack: null
@@ -541,6 +556,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.StartAllLinking = {
 			type: PacketID.StartAllLinking,
+			Type: PacketID[PacketID.StartAllLinking].replace(/([A-Z])/g, ' $1'),
 			linkCode:  null,
 			allLinkGroup:  null,
 			ack:  null,
@@ -576,6 +592,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.CancelAllLinking = {
 			type: PacketID.CancelAllLinking,
+			Type: PacketID[PacketID.CancelAllLinking].replace(/([A-Z])/g, ' $1'),
 			ack:  null
 		}
 
@@ -601,6 +618,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SetHostDeviceCategory = {
 			type: PacketID.SetHostDeviceCategory,
+			Type: PacketID[PacketID.SetHostDeviceCategory].replace(/([A-Z])/g, ' $1'),
 			devcat: null,
 			subcat: null,
 			firmware: null,
@@ -640,6 +658,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.ResetIM = {
 			type: PacketID.ResetIM,
+			Type: PacketID[PacketID.ResetIM].replace(/([A-Z])/g, ' $1'),
 			ack: null
 		}
 
@@ -665,6 +684,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SetACKMessageByte = {
 			type: PacketID.SetACKMessageByte,
+			Type: PacketID[PacketID.SetACKMessageByte].replace(/([A-Z])/g, ' $1'),
 			cmd2:  null,
 			ack:  null,
 		}
@@ -695,6 +715,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.GetFirstAllLinkRecord = {
 			type: PacketID.GetFirstAllLinkRecord,
+			Type: PacketID[PacketID.GetFirstAllLinkRecord].replace(/([A-Z])/g, ' $1'),
 			ack:  null
 		} 
 
@@ -720,6 +741,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.GetNextAllLinkRecord = {
 			type: PacketID.GetNextAllLinkRecord,
+			Type: PacketID[PacketID.GetNextAllLinkRecord].replace(/([A-Z])/g, ' $1'),
 			ack: null
 		}
 
@@ -745,6 +767,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SetIMConfiguration = {
 			type: PacketID.SetIMConfiguration,
+			Type: PacketID[PacketID.SetIMConfiguration].replace(/([A-Z])/g, ' $1'),
 			flags: null,
 			Flags: {
 				autoLinking: null,
@@ -790,6 +813,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.GetAllLinkRecordforSender = {
 			type: PacketID.GetAllLinkRecordForSender,
+			Type: PacketID[PacketID.GetAllLinkRecordForSender].replace(/([A-Z])/g, ' $1'),
 			ack: null
 		}
 
@@ -815,6 +839,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.LEDOn = {
 			type: PacketID.LEDOn,
+			Type: PacketID[PacketID.LEDOn].replace(/([A-Z])/g, ' $1'),
 			ack: null
 		}
 		
@@ -840,6 +865,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.LEDOff = {
 			type: PacketID.LEDOff,
+			Type: PacketID[PacketID.LEDOff].replace(/([A-Z])/g, ' $1'),
 			ack: null
 		}
 
@@ -865,6 +891,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.ManageAllLinkRecord = {
 			type: PacketID.ManageAllLinkRecord,
+			Type: PacketID[PacketID.ManageAllLinkRecord].replace(/([A-Z])/g, ' $1'),
 			controlCode: null,
 			flags: null,
 			Flags: {
@@ -920,6 +947,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SetNAKMessageByte = {
 			type: PacketID.SetNAKMessageByte,
+			Type: PacketID[PacketID.SetNAKMessageByte].replace(/([A-Z])/g, ' $1'),
 			cmd2:  null,
 			ack:  null
 		}
@@ -950,6 +978,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.SetACKMessageTwoBytes = {
 			type: PacketID.SetACKMessageTwoBytes,
+			Type: PacketID[PacketID.SetACKMessageTwoBytes].replace(/([A-Z])/g, ' $1'),
 			cmd1:  null,
 			cmd2:  null,
 			ack:  null
@@ -984,6 +1013,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.RFSleep = {
 			type: PacketID.RFSleep,
+			Type: PacketID[PacketID.RFSleep].replace(/([A-Z])/g, ' $1'),
 			cmd1: null,
 			cmd2: null,
 			ack: null
@@ -1019,6 +1049,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.GetIMConfiguration = {
 			type: PacketID.GetIMConfiguration,
+			Type: PacketID[PacketID.GetIMConfiguration].replace(/([A-Z])/g, ' $1'),
 			flags: null,
 			Flags: {
 				autoLED: null,
