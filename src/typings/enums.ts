@@ -75,3 +75,22 @@ export enum IMButtonEventType {
 	Button3Held              = 0x23,
 	Button3ReleasedAfterHold = 0x24,
 }
+
+export enum CommandType {
+	RemoteExitLinkingMode    = 0x08,
+	RemoteEnterLinkingMode   = 0x09,
+	INSTEONEngineVersion     = 0x0D,
+	RemoteEnterUnLinkingMode = 0x0A,
+	Ping                     = 0x0F,
+	IDRequest                = 0x10,
+	On                       = 0x11,
+	Off                      = 0x13,
+	StatusRequest            = 0x19,
+	SetProperty              = 0x20,
+	GetForGroupButton        = 0x2E,
+	ReadConfigurationByte    = 0x1F,
+	Beep                     = 0x30,
+	DirectGroupOn            = 0x32,
+	DirectGroupOff           = 0x33,
+
+}
