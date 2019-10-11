@@ -327,11 +327,11 @@ export const Parsers: {[key: number]: any} = {
 			if(this.index === 3){
 
 				this.packet.flags = byte;
-
+				
 				this.packet.Flags = {
-					inUse: ((byte & 12) != 0),
-					recordType: ((byte & 64) != 0) ? AllLinkRecordType.Controller
-					                               : AllLinkRecordType.Responder
+					inUse: ((byte & 128) !== 0),
+					recordType: ((byte & 64) !== 0) ? AllLinkRecordType.Controller
+					                                : AllLinkRecordType.Responder
 				}
 			}
 			else if(this.index === 4){
