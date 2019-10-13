@@ -59,6 +59,14 @@ export enum MessageSubtype {
 	NAKofGroupCleanupDirectMessage = 0x07,
 }
 
+export enum NakMeaning {
+	SenderDeviceIdNotInDatabase = 0xFF,
+	LoadSenseDetectsNoLoad = 0xFE,
+	ChecksumIncorrect = 0xFD,
+	PreNakDatabaseSearchTimeout = 0xFC,
+	IllegalValue = 0xFB,
+}
+
 export enum IMButtonEventType {
 	/* Set Button */
 	SetButtonTapped            = 0x02,
