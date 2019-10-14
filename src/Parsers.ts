@@ -486,7 +486,7 @@ export const Parsers: {[key: number]: any} = {
 
 				/* Reading Flags */
 				this.packet.Flags = {
-					maxHopes: (byte & 3),
+					maxHops: (byte & 3),
 					hopsLeft: ((byte & 12) >> 2),
 					extended: !!(byte & 16),
 					subtype: ((byte & 224) >> 5),
