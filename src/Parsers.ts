@@ -497,7 +497,7 @@ export const Parsers: {[key: number]: any} = {
 				if(this.packet.Flags.extended){
 					this.length = 23;
 					this.packet.extended = true;
-					this.packet.userData = [];
+					this.packet.extendedData = [];
 				}
 			}
 			else if(this.index === 7){
@@ -517,7 +517,7 @@ export const Parsers: {[key: number]: any} = {
 				}
 			}
 			else if(this.index >= 10){
-				this.packet.userData.push(byte);
+				this.packet.extendedData.push(byte);
 			}
 		}
 	},

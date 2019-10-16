@@ -78,6 +78,7 @@ export interface SendInsteonMessage extends Packet {
 	flags: Byte;
 	cmd1: Byte;
 	cmd2: Byte;
+	extendedData?: Byte[];
 	ack: boolean;
 }
 export interface SendX10 extends Packet {
