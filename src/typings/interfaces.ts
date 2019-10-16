@@ -3,9 +3,9 @@ import { PacketID, AllLinkRecordType, MessageSubtype } from './enums';
 import { Byte } from './types';
 
 export interface Packet {
+	[key: string]: any;
 	type: PacketID;
 	Type: string;
-	[key: string]: any;
 }
 export interface DeviceMessage extends Packet {
 	from: Byte[];

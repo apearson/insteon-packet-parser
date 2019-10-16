@@ -507,11 +507,13 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.cmd2 = byte;
 			}
 			else if(this.index === 9){
-				if(byte === 0x06){
-					this.packet.ack = true;
-				}
-				else if(byte === 0x15){
+				// NOTE: Sometimes the modem returns 0 here when it sent the message correctly
+				//       so 0x15 is always a fail, otherwise it's a pass
+				if(byte === 0x15){
 					this.packet.ack = false;
+				}
+				else {
+					this.packet.ack = true;
 				}
 			}
 			else if(this.index >= 10){

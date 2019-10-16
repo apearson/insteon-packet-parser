@@ -3,12 +3,12 @@ import { Transform } from 'stream';
 import { Parsers, Parser } from './Parsers';
 
 /* Interfaces and Types */
-import * as Packets from './typings/interfaces';
-import { Byte } from './typings/types';
+import * as Packet from './typings/interfaces';
+import { Byte, AnyPacket } from './typings/types';
 import { PacketID, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation } from './typings/enums';
 
 /* Exports */
-export { PacketID, Packets,  Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
+export { PacketID, Packet, AnyPacket, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
 
 export class InsteonParser extends Transform{
 	/* Internal Variables */
