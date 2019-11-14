@@ -40,8 +40,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.Packet = {
 			type: PacketID.ModemNotReady,
-			Type: MessageTypeMap[PacketID.ModemNotReady],
-
+			Type: MessageTypeMap[PacketID.ModemNotReady]
 		};
 
 		/* Parser */
