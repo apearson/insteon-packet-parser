@@ -40,8 +40,7 @@ export const Parsers: {[key: number]: any} = {
 		/* Packet */
 		packet: Packets.Packet = {
 			type: PacketID.ModemNotReady,
-			Type: MessageTypeMap[PacketID.ModemNotReady],
-
+			Type: MessageTypeMap[PacketID.ModemNotReady]
 		};
 
 		/* Parser */
@@ -497,7 +496,7 @@ export const Parsers: {[key: number]: any} = {
 				if(this.packet.Flags.extended){
 					this.length = 23;
 					this.packet.extended = true;
-					this.packet.userData = [];
+					this.packet.extendedData = [];
 				}
 			}
 			else if(this.index === 7){
@@ -507,15 +506,17 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.cmd2 = byte;
 			}
 			else if(this.index === 9){
-				if(byte === 0x06){
-					this.packet.ack = true;
-				}
-				else if(byte === 0x15){
+				// NOTE: Sometimes the modem returns 0 here when it sent the message correctly
+				//       so 0x15 is always a fail, otherwise it's a pass
+				if(byte === 0x15){
 					this.packet.ack = false;
+				}
+				else {
+					this.packet.ack = true;
 				}
 			}
 			else if(this.index >= 10){
-				this.packet.userData.push(byte);
+				this.packet.extendedData.push(byte);
 			}
 		}
 	},

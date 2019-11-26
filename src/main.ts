@@ -3,14 +3,14 @@ import { Transform } from 'stream';
 import { Parsers, Parser } from './Parsers';
 
 /* Interfaces and Types */
-import * as Packets from './typings/interfaces';
-import { Byte } from './typings/types';
+import * as Packet from './typings/interfaces';
+import { Byte, AnyPacket } from './typings/types';
 import { PacketID, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation } from './typings/enums';
 
 /* Exports */
-export { PacketID, Packets,  Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
+export { PacketID, Packet, AnyPacket, Byte, AllLinkRecordType, MessageSubtype, IMButtonEventType, AllLinkRecordOperation };
 
-export class InsteonParser extends Transform{
+export class InsteonParser extends Transform {
 	/* Internal Variables */
 	private debug: boolean = false;
 	private started: boolean = false;
@@ -49,7 +49,7 @@ export class InsteonParser extends Transform{
 			command = 'Starting Packet';
 			this.started = true;
 		}
-		else if(this.started && this.type == null){
+		else if(this.started && this.type == null && PacketID[byte] != null){
 			command = 'Grabbing packet type';
 			this.type = byte;
 			this.packet = new Parsers[byte]();
@@ -59,6 +59,8 @@ export class InsteonParser extends Transform{
 			this.packet.parse(byte);
 		}
 		else{
+			this.started = false;
+			
 			command = 'Unknown Data';
 		}
 
