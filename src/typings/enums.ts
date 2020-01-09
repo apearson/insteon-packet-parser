@@ -1,6 +1,7 @@
 export enum AllLinkRecordType {
 	Responder  = 0x00,
 	Controller = 0x01,
+	Delete     = 0xFF,
 }
 
 export enum AllLinkRecordOperation {
