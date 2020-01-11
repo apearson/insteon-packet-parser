@@ -1,8 +1,9 @@
 export enum AllLinkRecordType {
 	Responder  = 0x00,
 	Controller = 0x01,
+	Deleted    = 0xFF,
 }
-
+ 
 export enum AllLinkRecordOperation {
 	FindFirst                       = 0x00,
 	FindNext                        = 0x01,
