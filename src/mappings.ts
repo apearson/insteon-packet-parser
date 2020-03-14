@@ -1,6 +1,6 @@
 
 interface Mapping {
-	[key: number]: string
+	[key: number]: string;
 }
 
 const MessageTypeMap: Mapping = {
@@ -53,7 +53,7 @@ const MessageSubtypeMap: Mapping = {
 const AllLinkRecordTypeMap: Mapping = {
 	0x00: 'Responder',
 	0x01: 'Controller',
-}
+};
 
 const AllLinkRecordOperationMap: Mapping = {
 	0x00: 'FindFirst',
@@ -62,7 +62,7 @@ const AllLinkRecordOperationMap: Mapping = {
 	0x40: 'ModifyFirstControllerFoundOrAdd',
 	0x41: 'ModifyFirstResponderFoundOrAdd',
 	0x80: 'DeleteFirstFound',
-}
+};
 
 const IMButtonEventTypeMap: Mapping = {
 	/* Set Button */
@@ -79,7 +79,7 @@ const IMButtonEventTypeMap: Mapping = {
 	0x22: 'Button3Tapped',
 	0x23: 'Button3Held',
 	0x24: 'Button3ReleasedAfterHold',
-}
+};
 
 export {
 	MessageTypeMap,
@@ -87,4 +87,4 @@ export {
 	AllLinkRecordTypeMap,
 	AllLinkRecordOperationMap,
 	IMButtonEventTypeMap
-}
+};

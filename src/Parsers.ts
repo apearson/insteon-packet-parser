@@ -1,11 +1,11 @@
 /* Libraries */
 import * as Packets from './typings/interfaces';
-import { PacketID, AllLinkRecordType, MessageSubtype } from './typings/enums';
+import { PacketID, AllLinkRecordType } from './typings/enums';
 import { Byte } from './main';
 import { MessageSubtypeMap, MessageTypeMap } from './mappings';
 
 /* Packet abstract base class */
-export class Parser {
+export abstract class Parser {
 	/* Internal Variables */
 	public length: number;
 	public index: number;
@@ -14,7 +14,7 @@ export class Parser {
 	get completed() {
 		return this.index >= this.length;
 	}
- 
+
 	constructor(length: number, index: number){
 		/* Packet metadata */
 		this.length = length;
@@ -27,10 +27,13 @@ export class Parser {
 		};
 	}
 
-	parse(byte: Byte): void {}
+	parse(byte: Byte): void {
+		throw Error(`Can not parse byte "${byte}" in abtract class`);
+	}
 }
 
 /* Packet Parsing Classes */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Parsers: {[key: number]: any} = {
 	0x15: class extends Parser {
 		/* Packet Meta */
@@ -93,7 +96,7 @@ export const Parsers: {[key: number]: any} = {
 					extended: !!(byte & 16),
 					subtype: ((byte & 224) >> 5),
 					Subtype: MessageSubtypeMap[((byte & 224) >> 5)]
-				}
+				};
 
 			}
 			else if (this.index == 10){
@@ -150,7 +153,7 @@ export const Parsers: {[key: number]: any} = {
 					extended: !!(byte & 16),
 					subtype: ((byte & 224) >> 5),
 					Subtype: MessageSubtypeMap[((byte & 224) >> 5)]
-				}
+				};
 
 			}
 			else if (this.index == 10){
@@ -200,9 +203,9 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.AllLinkingCompleted = {
 			type: PacketID.AllLinkingCompleted,
 			Type: MessageTypeMap[PacketID.AllLinkingCompleted],
-			linkCode:  null,
+			linkCode: null,
 			allLinkGroup: null,
-			from:  [],
+			from: [],
 			devcat: null,
 			subcat: null,
 			firmware: null
@@ -313,8 +316,8 @@ export const Parsers: {[key: number]: any} = {
 				inUse: false,
 				recordType: AllLinkRecordType.Controller
 			},
-			from:  [],
-			linkData:  []
+			from: [],
+			linkData: []
 		}
 
 		/* Parser */
@@ -326,12 +329,12 @@ export const Parsers: {[key: number]: any} = {
 			if(this.index === 3){
 
 				this.packet.flags = byte;
-				
+
 				this.packet.Flags = {
 					inUse: ((byte & 128) !== 0),
 					recordType: ((byte & 64) !== 0) ? AllLinkRecordType.Controller
 					                                : AllLinkRecordType.Responder
-				}
+				};
 			}
 			else if(this.index === 4){
 				this.packet.allLinkGroup = byte;
@@ -424,7 +427,7 @@ export const Parsers: {[key: number]: any} = {
 			type: PacketID.SendAllLinkCommand,
 			Type: MessageTypeMap[PacketID.SendAllLinkCommand],
 			allLinkGroup: null,
-			allLinkCommand:  null,
+			allLinkCommand: null,
 			broadcastCommand2: null,
 			ack: null,
 		}
@@ -469,7 +472,7 @@ export const Parsers: {[key: number]: any} = {
 			cmd1: null,
 			cmd2: null,
 			ack: null
-		} 
+		}
 
 		/* Parser */
 		parse(byte: Byte){
@@ -490,7 +493,7 @@ export const Parsers: {[key: number]: any} = {
 					extended: !!(byte & 16),
 					subtype: ((byte & 224) >> 5),
 					Subtype: MessageSubtypeMap[((byte & 224) >> 5)]
-				}
+				};
 
 				/* Checking for extended packet */
 				if(this.packet.Flags.extended){
@@ -565,9 +568,9 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.StartAllLinking = {
 			type: PacketID.StartAllLinking,
 			Type: MessageTypeMap[PacketID.StartAllLinking],
-			linkCode:  null,
-			allLinkGroup:  null,
-			ack:  null,
+			linkCode: null,
+			allLinkGroup: null,
+			ack: null,
 		}
 
 		/* Parser */
@@ -601,7 +604,7 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.CancelAllLinking = {
 			type: PacketID.CancelAllLinking,
 			Type: MessageTypeMap[PacketID.CancelAllLinking],
-			ack:  null
+			ack: null
 		}
 
 		/* Parser */
@@ -631,7 +634,7 @@ export const Parsers: {[key: number]: any} = {
 			subcat: null,
 			firmware: null,
 			ack: null
-		} 
+		}
 
 		/* Parser */
 		parse(byte: Byte){
@@ -679,7 +682,7 @@ export const Parsers: {[key: number]: any} = {
 			if(byte === 0x06){
 				this.packet.ack = true;
 			}
-			else  if(byte === 0x15){
+			else if(byte === 0x15){
 				this.packet.ack = false;
 			}
 		}
@@ -693,8 +696,8 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.SetACKMessageByte = {
 			type: PacketID.SetACKMessageByte,
 			Type: MessageTypeMap[PacketID.SetACKMessageByte],
-			cmd2:  null,
-			ack:  null,
+			cmd2: null,
+			ack: null,
 		}
 
 		/* Parser */
@@ -724,8 +727,8 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.GetFirstAllLinkRecord = {
 			type: PacketID.GetFirstAllLinkRecord,
 			Type: MessageTypeMap[PacketID.GetFirstAllLinkRecord],
-			ack:  null
-		} 
+			ack: null
+		}
 
 		/* Parser */
 		parse(byte: Byte){
@@ -783,7 +786,7 @@ export const Parsers: {[key: number]: any} = {
 				autoLED: null,
 				deadman: null,
 			},
-			ack:  null
+			ack: null
 		};
 
 		/* Parsing byte */
@@ -801,7 +804,7 @@ export const Parsers: {[key: number]: any} = {
 					monitorMode: !!(byte & 64),
 					autoLED: !(byte & 32),
 					deadman: !(byte & 16)
-				}
+				};
 			}
 			else if(this.index === 4){
 				if(byte === 0x06){
@@ -850,7 +853,7 @@ export const Parsers: {[key: number]: any} = {
 			Type: MessageTypeMap[PacketID.LEDOn],
 			ack: null
 		}
-		
+
 		/* Parser */
 		parse(byte: Byte){
 			/* Moving to next index */
@@ -926,7 +929,7 @@ export const Parsers: {[key: number]: any} = {
 				this.packet.Flags = {
 					recordType: ((byte & 64) != 0) ? AllLinkRecordType.Controller
 					                               : AllLinkRecordType.Responder
-				}
+				};
 			}
 			else if(this.index === 5){
 				this.packet.allLinkGroup = byte;
@@ -956,8 +959,8 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.SetNAKMessageByte = {
 			type: PacketID.SetNAKMessageByte,
 			Type: MessageTypeMap[PacketID.SetNAKMessageByte],
-			cmd2:  null,
-			ack:  null
+			cmd2: null,
+			ack: null
 		}
 
 		/* Parser */
@@ -987,9 +990,9 @@ export const Parsers: {[key: number]: any} = {
 		packet: Packets.SetACKMessageTwoBytes = {
 			type: PacketID.SetACKMessageTwoBytes,
 			Type: MessageTypeMap[PacketID.SetACKMessageTwoBytes],
-			cmd1:  null,
-			cmd2:  null,
-			ack:  null
+			cmd1: null,
+			cmd2: null,
+			ack: null
 		};
 
 		/* Parser */
@@ -1065,7 +1068,7 @@ export const Parsers: {[key: number]: any} = {
 				deadman: null,
 				monitorMode: null
 			},
-			ack:  null
+			ack: null
 		}
 
 		/* Parser */
@@ -1083,7 +1086,7 @@ export const Parsers: {[key: number]: any} = {
 					monitorMode: !!(byte & 64),
 					autoLED: !(byte & 32),
 					deadman: !(byte & 16)
-				}
+				};
 			}
 			else if(this.index === 6){
 				if(byte === 0x06){

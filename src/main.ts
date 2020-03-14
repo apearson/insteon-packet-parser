@@ -12,8 +12,8 @@ export { PacketID, Packet, AnyPacket, Byte, AllLinkRecordType, MessageSubtype, I
 
 export class InsteonParser extends Transform {
 	/* Internal Variables */
-	private debug: boolean = false;
-	private started: boolean = false;
+	private debug = false;
+	private started = false;
 	private type?: number = null;
 	private packet: Parser = null;
 
@@ -24,12 +24,12 @@ export class InsteonParser extends Transform {
 		this.debug = options.debug;
 	}
 
-	_transform(chunk: Buffer, encoding: string, completed: ()=> void){
+	_transform(chunk: Buffer, encoding: string, completed: () => void){
 		if(this.debug){
 			console.info(`Got chunk: ${chunk}`);
 		}
 
-		/* Splitting chunk into bytes and parsing each individually  */
+		/* Splitting chunk into bytes and parsing each individually */
 		for(let i = 0; i < chunk.length; i++){
 			this._parseByte(chunk.readUInt8(i) as Byte);
 		}
@@ -60,7 +60,7 @@ export class InsteonParser extends Transform {
 		}
 		else{
 			this.started = false;
-			
+
 			command = 'Unknown Data';
 		}
 
@@ -80,4 +80,4 @@ export class InsteonParser extends Transform {
 			this.packet = null;
 		}
 	}
-};
+}

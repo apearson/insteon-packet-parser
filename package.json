@@ -1,35 +1,39 @@
 {
-  "name": "insteon-packet-parser",
-  "version": "3.3.1",
-  "description": "A simple Insteon packet parser to be used by Node Serialport and a PowerLinc Modem (PLM) library or program",
-  "main": "dist/main.js",
-  "types": "dist/main.d.ts",
-  "scripts": {
-    "prepublish": "yarn run build",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/apearson/insteon-packet-parser.git"
-  },
-  "keywords": [
-    "insteon",
-    "parser",
-    "serialport",
-    "PLM"
-  ],
-  "author": "John Andrew Tyler Pearson",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/apearson/insteon-packet-parser/issues"
-  },
-  "homepage": "https://github.com/apearson/insteon-packet-parser#readme",
-  "files": [
-    "dist/"
-  ],
-  "devDependencies": {
-    "@types/node": "^12.12.7",
-    "typescript": "^3.7.2"
-  }
+	"name": "insteon-packet-parser",
+	"version": "3.3.1",
+	"description": "A simple Insteon packet parser to be used by Node Serialport and a PowerLinc Modem (PLM) library or program",
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
+	"scripts": {
+		"prepublish": "yarn run build",
+		"build": "tsc",
+		"check": "eslint ./src/main.ts",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/apearson/insteon-packet-parser.git"
+	},
+	"keywords": [
+		"insteon",
+		"parser",
+		"serialport",
+		"PLM"
+	],
+	"author": "John Andrew Tyler Pearson",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/apearson/insteon-packet-parser/issues"
+	},
+	"homepage": "https://github.com/apearson/insteon-packet-parser#readme",
+	"files": [
+		"dist/"
+	],
+	"devDependencies": {
+		"@types/node": "^12.12.7",
+		"@typescript-eslint/eslint-plugin": "^2.13.0",
+		"@typescript-eslint/parser": "^2.13.0",
+		"eslint": "^6.8.0",
+		"typescript": "^3.7.2"
+	}
 }

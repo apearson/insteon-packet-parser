@@ -1,16 +1,15 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "target": "es6",
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "dist",
-    "composite": true,
-    "rootDir": "./src"
-  },
-  "include": [
-    "./src/**/*"
-  ]
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": true,
+		"target": "es6",
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "dist",
+		"rootDir": "./src"
+	},
+	"include": [
+		"./src/**/*"
+	]
 }
